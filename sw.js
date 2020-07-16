@@ -24,13 +24,13 @@ var precacheUrls = [];
 
   precacheUrls.push('/');
 
-  precacheUrls.push('/2020/07/12/ALO/');
+  precacheUrls.push('/2020/07/13/Best-Cow-Line-G/');
 
   precacheUrls.push('/2020/07/13/Array-Shrinking/');
 
-  precacheUrls.push('/2020/07/13/Best-Cow-Line-G/');
+  precacheUrls.push('/2020/07/10/hello-world/');
 
-  precacheUrls.push('/2020/07/15/Island/');
+  precacheUrls.push('/2020/07/12/ALO/');
 
   precacheUrls.push('/2020/07/14/convex-hull/');
 
