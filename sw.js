@@ -26,9 +26,9 @@ var precacheUrls = [];
 
   precacheUrls.push('/2020/07/12/ALO/');
 
-  precacheUrls.push('/2020/07/13/Best-Cow-Line-G/');
-
   precacheUrls.push('/2020/07/13/Array-Shrinking/');
+
+  precacheUrls.push('/2020/07/13/Best-Cow-Line-G/');
 
   precacheUrls.push('/2020/07/15/Island/');
 
