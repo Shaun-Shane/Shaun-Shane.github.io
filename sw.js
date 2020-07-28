@@ -26,13 +26,13 @@ var precacheUrls = [];
 
   precacheUrls.push('/2020/07/12/ALO/');
 
-  precacheUrls.push('/2020/07/28/Placing-Rooks/');
-
-  precacheUrls.push('/2020/07/15/Island/');
+  precacheUrls.push('/2020/07/13/Array-Shrinking/');
 
   precacheUrls.push('/2020/07/13/Best-Cow-Line-G/');
 
-  precacheUrls.push('/2020/07/17/atcoder-abc-167/');
+  precacheUrls.push('/2020/07/15/Island/');
+
+  precacheUrls.push('/2020/07/28/Placing-Rooks/');
 
 toolbox.precache(precacheUrls);
 toolbox.options = {"networkTimeoutSeconds":5};
