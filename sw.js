@@ -32,7 +32,7 @@ var precacheUrls = [];
 
   precacheUrls.push('/2020/07/15/Island/');
 
-  precacheUrls.push('/2020/07/28/Placing-Rooks/');
+  precacheUrls.push('/2020/07/18/alloy/');
 
 toolbox.precache(precacheUrls);
 toolbox.options = {"networkTimeoutSeconds":5};
