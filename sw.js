@@ -24,6 +24,8 @@ var precacheUrls = [];
 
   precacheUrls.push('/');
 
+  precacheUrls.push('/2020/08/12/A-Twisty-Movement/');
+
   precacheUrls.push('/2020/08/11/Adaptive-Simpson/');
 
   precacheUrls.push('/2020/07/12/ALO/');
@@ -31,8 +33,6 @@ var precacheUrls = [];
   precacheUrls.push('/2020/07/13/Array-Shrinking/');
 
   precacheUrls.push('/2020/07/13/Best-Cow-Line-G/');
-
-  precacheUrls.push('/2020/07/15/Island/');
 
 toolbox.precache(precacheUrls);
 toolbox.options = {"networkTimeoutSeconds":5};
