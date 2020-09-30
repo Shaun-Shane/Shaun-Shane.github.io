@@ -24,11 +24,11 @@ var precacheUrls = [];
 
   precacheUrls.push('/');
 
+  precacheUrls.push('/2020/08/12/A-Twisty-Movement/');
+
   precacheUrls.push('/2020/07/12/ALO/');
 
   precacheUrls.push('/2020/08/11/Adaptive-Simpson/');
-
-  precacheUrls.push('/2020/08/12/A-Twisty-Movement/');
 
   precacheUrls.push('/2020/07/13/Array-Shrinking/');
 
