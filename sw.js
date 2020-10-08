@@ -28,9 +28,9 @@ var precacheUrls = [];
 
   precacheUrls.push('/2020/07/12/ALO/');
 
-  precacheUrls.push('/2020/08/11/Adaptive-Simpson/');
-
   precacheUrls.push('/2020/07/13/Array-Shrinking/');
+
+  precacheUrls.push('/2020/08/11/Adaptive-Simpson/');
 
   precacheUrls.push('/2020/09/03/Battle-for-Azathoth/');
 
