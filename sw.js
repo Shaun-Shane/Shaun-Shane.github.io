@@ -24,13 +24,13 @@ var precacheUrls = [];
 
   precacheUrls.push('/');
 
-  precacheUrls.push('/2021/04/09/8-digit-puzzle/');
-
-  precacheUrls.push('/2020/07/12/ALO/');
-
-  precacheUrls.push('/2020/07/13/Array-Shrinking/');
+  precacheUrls.push('/2020/10/24/cf-411-div2/');
 
   precacheUrls.push('/2020/08/12/A-Twisty-Movement/');
+
+  precacheUrls.push('/2020/09/05/Mo-s-Algorithm-on-tree/');
+
+  precacheUrls.push('/2021/08/05/Lagrange-Interplotation/');
 
   precacheUrls.push('/2020/09/03/Battle-for-Azathoth/');
 
