@@ -1,0 +1,514 @@
+<!DOCTYPE html><html lang="zh-CN"><head><link rel=manifest href=/manifest.json><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#54bcff"><link rel="manifest" href="/manifest.json?v=2.1.1"><link rel="icon" href="/images/icons/favicon-16x16.png?v=2.1.1" type="image/png" sizes="16x16"><link rel="icon" href="/images/icons/favicon-32x32.png?v=2.1.1" type="image/png" sizes="32x32"><meta name="description" content="八数码问题         搜索&#x2F;A*">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A*算法求解八数码问题">
+<meta property="og:url" content="http://shaun-shane.vercel.app/2021/04/09/8-digit-puzzle/index.html">
+<meta property="og:site_name" content="Shaun-Shane blog">
+<meta property="og:description" content="八数码问题         搜索&#x2F;A*">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://shaun-shane.vercel.app/images/8-digit-puzzle/1.png">
+<meta property="og:image" content="http://shaun-shane.vercel.app/images/8-digit-puzzle/2.png">
+<meta property="og:image" content="http://shaun-shane.vercel.app/images/8-digit-puzzle/3.png">
+<meta property="og:image" content="http://shaun-shane.vercel.app/images/8-digit-puzzle/4.png">
+<meta property="og:image" content="http://shaun-shane.vercel.app/images/8-digit-puzzle/5.png">
+<meta property="og:image" content="http://shaun-shane.vercel.app/images/8-digit-puzzle/6.png">
+<meta property="og:image" content="http://shaun-shane.vercel.app/images/8-digit-puzzle/9.png">
+<meta property="og:image" content="http://shaun-shane.vercel.app/images/8-digit-puzzle/5.png">
+<meta property="og:image" content="http://shaun-shane.vercel.app/images/8-digit-puzzle/6.png">
+<meta property="article:published_time" content="2021-04-09T09:15:15.000Z">
+<meta property="article:modified_time" content="2023-09-15T14:34:54.000Z">
+<meta property="article:author" content="Shaun-Shane">
+<meta property="article:tag" content="A*算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://shaun-shane.vercel.app/images/8-digit-puzzle/1.png"><title>A*算法求解八数码问题 | Shaun-Shane blog</title><link ref="canonical" href="http://shaun-shane.vercel.app/2021/04/09/8-digit-puzzle/"><link rel="dns-prefetch" href="https://fastly.jsdelivr.net"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.1/css/all.min.css" type="text/css"><link rel="stylesheet" href="/css/index.css?v=2.1.1"><script>var Stun = window.Stun || {};
+var CONFIG = {
+  root: '/',
+  algolia: undefined,
+  fontIcon: {"prompt":{"success":"fas fa-check-circle","info":"fas fa-arrow-circle-right","warning":"fas fa-exclamation-circle","error":"fas fa-times-circle"},"copyBtn":"fas fa-copy"},
+  sidebar: {"offsetTop":"20px","tocMaxDepth":6},
+  header: {"enable":true,"showOnPost":true,"scrollDownIcon":true},
+  postWidget: {"endText":true},
+  nightMode: {"enable":true},
+  back2top: {"enable":true},
+  codeblock: {"style":"default","highlight":"light","wordWrap":false},
+  reward: false,
+  fancybox: false,
+  zoomImage: {"gapAside":"20px"},
+  galleryWaterfall: undefined,
+  lazyload: true,
+  pjax: {"avoidBanner":true},
+  externalLink: {"icon":{"enable":true,"name":"fas fa-external-link-alt"}},
+  shortcuts: undefined,
+  prompt: {"copyButton":"复制","copySuccess":"复制成功","copyError":"复制失败"},
+  sourcePath: {"js":"js","css":"css","images":"images"},
+};
+
+window.CONFIG = CONFIG;</script><meta name="generator" content="Hexo 4.1.1"></head><body><div class="container" id="container"><header class="header" id="header"><div class="header-inner"><nav class="header-nav header-nav--fixed"><div class="header-nav-inner"><div class="header-nav-menubtn"><i class="fas fa-bars"></i></div><div class="header-nav-menu"><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/"><span class="header-nav-menu-item__icon"><i class="fas fa-home"></i></span><span class="header-nav-menu-item__text">首页</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="javascript:;" onclick="return false;"><span class="header-nav-menu-item__icon"><i class="fas fa-feather"></i></span><span class="header-nav-menu-item__text">文章</span></a><div class="header-nav-submenu"><div class="header-nav-submenu-item"><a class="header-nav-submenu-item__link" href="/archives/"><span class="header-nav-submenu-item__icon"><i class="fas fa-folder-open"></i></span><span class="header-nav-submenu-item__text">归档</span></a></div><div class="header-nav-submenu-item"><a class="header-nav-submenu-item__link" href="/categories/"><span class="header-nav-submenu-item__icon"><i class="fas fa-layer-group"></i></span><span class="header-nav-submenu-item__text">分类</span></a></div><div class="header-nav-submenu-item"><a class="header-nav-submenu-item__link" href="/tags/"><span class="header-nav-submenu-item__icon"><i class="fas fa-tags"></i></span><span class="header-nav-submenu-item__text">标签</span></a></div></div></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/categories/"><span class="header-nav-menu-item__icon"><i class="fas fa-layer-group"></i></span><span class="header-nav-menu-item__text">分类</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/tags/"><span class="header-nav-menu-item__icon"><i class="fas fa-tags"></i></span><span class="header-nav-menu-item__text">标签</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/about/"><span class="header-nav-menu-item__icon"><i class="fas fa-fingerprint"></i></span><span class="header-nav-menu-item__text">关于</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="javascript:;" onclick="return false;"><span class="header-nav-menu-item__icon"><i class="fas fa-angle-double-down"></i></span><span class="header-nav-menu-item__text">其它</span></a><div class="header-nav-submenu"><div class="header-nav-submenu-item"><a class="header-nav-submenu-item__link" href="/link/"><span class="header-nav-submenu-item__icon"><i class="fas fa-link"></i></span><span class="header-nav-submenu-item__text">链接</span></a></div></div></div></div><div class="header-nav-search"><span class="header-nav-search__icon"><i class="fas fa-search"></i></span><span class="header-nav-search__text">搜索</span></div><div class="header-nav-mode"><div class="mode"><div class="mode-track"><span class="mode-track-moon"></span><span class="mode-track-sun"></span></div><div class="mode-thumb"></div></div></div></div></nav><div class="header-banner"><div class="header-banner-info"><div class="header-banner-info__title">Shaun-Shane blog</div><div class="header-banner-info__subtitle"></div></div><div class="header-banner-arrow"><div class="header-banner-arrow__icon"><i class="fas fa-angle-down"></i></div></div></div></div></header><main class="main" id="main"><div class="main-inner"><div class="content-wrap" id="content-wrap"><div class="content" id="content"><!-- Just used to judge whether it is an article page--><div id="is-post"></div><div class="post"><header class="post-header"><h1 class="post-title">A*算法求解八数码问题</h1><div class="post-meta"><span class="post-meta-item post-meta-item--createtime"><span class="post-meta-item__icon"><i class="far fa-calendar-plus"></i></span><span class="post-meta-item__info">发表于</span><span class="post-meta-item__value">2021-04-09</span></span><span class="post-meta-item post-meta-item--updatetime"><span class="post-meta-item__icon"><i class="far fa-calendar-check"></i></span><span class="post-meta-item__info">更新于</span><span class="post-meta-item__value">2023-09-15</span></span><span class="post-meta-item post-meta-item--wordcount"><span class="post-meta-item__icon"><i class="far fa-file-word"></i></span><span class="post-meta-item__info">字数统计</span><span class="post-meta-item__value">3.3k</span></span><span class="post-meta-item post-meta-item--readtime"><span class="post-meta-item__icon"><i class="far fa-clock"></i></span><span class="post-meta-item__info">阅读时长</span><span class="post-meta-item__value">23分</span></span></div></header><div class="post-body">
+        <h1 id="八数码问题"   >
+          <a href="#八数码问题" class="heading-link"><i class="fas fa-link"></i></a>八数码问题</h1>
+      
+<ul>
+<li>搜索/A*</li>
+</ul>
+<a id="more"></a>
+
+        <h1 id="实验说明"   >
+          <a href="#实验说明" class="heading-link"><i class="fas fa-link"></i></a>实验说明</h1>
+      
+<p>使用 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>A</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">A^*</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.688696em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.688696em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span></span></span></span> 算法求<span class="exturl"><a class="exturl__link"   href="https://vijos.org/p/1360"  target="_blank" rel="noopener">八数码问题</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span>。给定初始局面和目标局面，动态演示求解方案。</p>
+<p>由于之前使用过 <code>c++</code> 求解八数码问题，本次实验采用的是 <code>javascript</code> 求解，并通过 <code>html + css</code> 进一步实现交互界面。效果如下:</p>
+<center class="half">
+    
+        <img   class="lazyload lazyload-gif"
+          src="/images/loading.svg" data-src="/images/8-digit-puzzle/1.png"  width="320" height="180"/>
+      
+    
+        <img   class="lazyload lazyload-gif"
+          src="/images/loading.svg" data-src="/images/8-digit-puzzle/2.png"  width="320" height="180"/>
+      
+    
+        <img   class="lazyload lazyload-gif"
+          src="/images/loading.svg" data-src="/images/8-digit-puzzle/3.png"  width="320" height="180"/>
+      
+</center>
+
+        <h1 id="算法分析"   >
+          <a href="#算法分析" class="heading-link"><i class="fas fa-link"></i></a>算法分析</h1>
+      
+<p>求解八数码问题有很多方法，比如深度优先搜索、宽度优先搜索、一致代价搜索、双向搜索。其中深度优先搜索容易在较深的分支上停留很长时间，对于目标远离初始搜索分支的搜索树来说，效率是极低的; 宽度优先搜索对搜索树进行层次遍历，但是当子树极度不平很时，搜索效率也是相对较低的。</p>
+<p>总的来说，上述无差别的搜索是不太合理的，在进行搜索时很多情况下是在找不到解的路线上进行搜索。因此我们希望通过一些启发方法，能最大可能地在有最优解的路线上进行搜索，这就是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>A</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">A^*</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.688696em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.688696em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span></span></span></span> 算法所做的。</p>
+<p>在分析 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>A</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">A^*</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.688696em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.688696em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span></span></span></span> 算法之前，先回顾以下优先队列 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>B</mi><mi>F</mi><mi>S</mi></mrow><annotation encoding="application/x-tex">BFS</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span> 算法。该算法维护了一个优先队列，不断从堆中取出<strong>当前代价</strong>最小的元素进行扩展。每个状态第一次从堆中取出时，就得到了从初态到该状态的最小代价。然而这样的策略不是完善的，当前搜索代价小可能会导致未来搜索花费更大的代价；当前搜索代价大，被扩展地晚，最终的代价可能更优。</p>
+<p>为了提高搜索效率，可以对未来可能产生的代价进行预估。在搜索时，仍然维护一个堆，不断从堆中取出<strong>当前代价 + 未来估价</strong>最小的状态进行扩展。</p>
+<p>在八数码问题中，当前代价即为空格已移动的次数。</p>
+<p>对于未来估价，由于<strong>未来估价不能大于未来实际代价</strong>，这里采用所有数字在当前状态 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mi>t</mi><mi>a</mi><mi>t</mi><mi>e</mi></mrow><annotation encoding="application/x-tex">state</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61508em;vertical-align:0em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">e</span></span></span></span> 中的位置与目标状态 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>e</mi><mi>n</mi><mi>d</mi></mrow><annotation encoding="application/x-tex">end</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span></span></span></span> 中的位置的曼哈顿距离之和，因为每次移动空格只会有一个数字位置改变，一个数字移动到目标状态的一定至少需要移动两位置的曼哈顿距离。即：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>s</mi><mi>t</mi><mi>a</mi><mi>t</mi><mi>e</mi><mo stretchy="false">)</mo><mo>=</mo><munderover><mo>∑</mo><mrow><mi>n</mi><mi>u</mi><mi>m</mi><mo>=</mo><mn>0</mn></mrow><mn>8</mn></munderover><mo stretchy="false">(</mo><mi mathvariant="normal">∣</mi><mi>s</mi><mi>t</mi><mi>a</mi><mi>t</mi><msub><mi>e</mi><msub><mi>x</mi><mrow><mi>n</mi><mi>u</mi><mi>m</mi></mrow></msub></msub><mo>−</mo><mi>e</mi><mi>n</mi><msub><mi>d</mi><msub><mi>x</mi><mrow><mi>n</mi><mi>u</mi><mi>m</mi></mrow></msub></msub><mi mathvariant="normal">∣</mi><mo>+</mo><mi mathvariant="normal">∣</mi><mi>s</mi><mi>t</mi><mi>a</mi><mi>t</mi><msub><mi>e</mi><msub><mi>y</mi><mrow><mi>n</mi><mi>u</mi><mi>m</mi></mrow></msub></msub><mo>−</mo><mi>e</mi><mi>n</mi><msub><mi>d</mi><msub><mi>y</mi><mrow><mi>n</mi><mi>u</mi><mi>m</mi></mrow></msub></msub><mi mathvariant="normal">∣</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(state) = \sum\limits_{num=0}^{8}(|state_{x_{num}} - end_{x_{num}}| + |state_{y_{num}} - end_{y_{num}}|)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">e</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:3.068226em;vertical-align:-1.267113em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8011130000000004em;"><span style="top:-1.882887em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">m</span><span class="mrel mtight">=</span><span class="mord mtight">0</span></span></span></span><span style="top:-3.050005em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3000050000000005em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">8</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.267113em;"><span></span></span></span></span></span><span class="mopen">(</span><span class="mord">∣</span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139199999999997em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285719em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">m</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2501em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.0001em;vertical-align:-0.2501em;"></span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mord"><span class="mord mathdefault">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139199999999997em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285719em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">m</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2501em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord">∣</span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285719em;"><span style="top:-2.357em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">m</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mord"><span class="mord mathdefault">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285719em;"><span style="top:-2.357em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">m</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mclose">)</span></span></span></span></span></p>
+
+        <h1 id="算法设计实现"   >
+          <a href="#算法设计实现" class="heading-link"><i class="fas fa-link"></i></a>算法设计实现</h1>
+      
+<p>根据上述分析可设计 <code>javascript</code> 估值函数：</p>
+<figure class="highlight js"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">evalute</span>(<span class="params">curStep</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> res = curStep;</span><br><span class="line">    <span class="keyword">let</span> curx = <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">9</span>), cury = <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">9</span>);</span><br><span class="line">    <span class="keyword">let</span> endx = <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">9</span>), endy = <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">9</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> j = <span class="number">0</span>; j &lt; <span class="number">3</span>; j++) &#123;</span><br><span class="line">            curx[array[i][j]] = i, cury[array[i][j]] = j;</span><br><span class="line">            endx[endArray[i][j]] = i, endy[endArray[i][j]] = j;</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">9</span>; i++) res += <span class="built_in">Math</span>.abs(curx[i] - endx[i]) + <span class="built_in">Math</span>.abs(cury[i] - endy[i]);</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></div></figure>
+<p>为了保证 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>A</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">A^*</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.688696em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.688696em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span></span></span></span> 算法的效率，每个状态只需要在第一次被取出时扩展一次。本题由于总共有9个格子，故可用每个状态可用 9 位数字进行简单表示(不舍弃前导零)。对于 <code>c++</code>，可以将这些数字放在 <code>std::unordered_map&lt;T, T&gt;</code> 或 <code>std::map&lt;T, T&gt;</code> 中，在 <code>javascript</code> 中可以用其提供的 <code>Map()</code> 来存放键值对。当然还可以通过其它方法优化状态的记录，在后面的优化内容中会提到。</p>
+<p><strong>去重相关代码：</strong></p>
+<figure class="highlight js"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">_hash</span>(<span class="params"></span>) </span>&#123; <span class="comment">// 简单hash</span></span><br><span class="line">    <span class="keyword">let</span> res = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> j = <span class="number">0</span>; j &lt; <span class="number">3</span>; j++)</span><br><span class="line">            res = res * <span class="number">10</span> + array[i][j];</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ((dis.get(nxtBoard.hashVal) == <span class="literal">undefined</span>) || dis[nxtBoard.hashVal] &gt; dis[curBoard.hashVal] + <span class="number">1</span>) &#123;</span><br><span class="line">    dis.set(nxtBoard.hashVal, dis.get(curBoard.hashVal) + <span class="number">1</span>);</span><br><span class="line">    pre.set(nxtBoard.hashVal, curBoard.hashVal);</span><br><span class="line">    q.queue(nxtBoard);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></div></figure>
+<p>在 $A^* $ 搜索函数中，我使用的是优先队列宽度优先搜索。由于本次实验重点在于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>A</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">A^*</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.688696em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.688696em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span></span></span></span> 算法与求解方案，故使用的是 <code>npm</code> 包中的优先队列，见<span class="exturl"><a class="exturl__link"   href="https://www.npmjs.com/package/js-priority-queue"  target="_blank" rel="noopener">链接</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span>，入队出队的时间复杂度均为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>l</mi><mi>o</mi><mi>g</mi><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(logn)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span>。</p>
+<p><strong>优先队列实例见下：</strong></p>
+<figure class="highlight js"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> q = <span class="keyword">new</span> PriorityQueue(&#123; <span class="attr">comparator</span>: <span class="function"><span class="keyword">function</span>(<span class="params">boarda, boardb</span>) </span>&#123; <span class="keyword">return</span> boarda.eval - boardb.eval; <span class="comment">/*按估值从小到大排序*/</span>&#125;&#125;);</span><br></pre></td></tr></table></div></figure>
+<p>该优先队列中存放的是 <code>Board</code> 对象，对象包含九宫格状态<code>state</code>、估值 <code>eval</code>、当前局面的哈希值 <code>hashVal</code>，如下所示：</p>
+<figure class="highlight js"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Board</span>(<span class="params">array, curStep</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.state = copy(array); <span class="comment">// 3 * 3状态</span></span><br><span class="line">    <span class="keyword">this</span>.eval = evalute(curStep); <span class="comment">// 估值 </span></span><br><span class="line">    <span class="keyword">this</span>.hashVal = _hash(); <span class="comment">//哈希值</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></div></figure>
+<p>在进行搜索时，估值 <code>eval</code> 小的 <code>Board</code> 对象先出队，找到其九宫格状态 <code>state</code> 中空格的位置，对空格四个方向进行遍历得到合法的新的九宫格，通过 <code>Map_dis</code> 判断该状态(哈希值)是否访问过并记录该状态(哈希值)下已走的最小步数。此外，为了得到求解方案，还需一个 <code>Map_pre</code> 记录该状态(哈希值)的前一个状态(哈希值)。</p>
+<p><strong><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>A</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">A^*</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.688696em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.688696em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span></span></span></span>算法核心代码：</strong></p>
+<figure class="highlight js"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">aStar</span>(<span class="params">sx, sy, solution</span>) </span>&#123; <span class="comment">// A*</span></span><br><span class="line">    <span class="keyword">let</span> startBoard = <span class="keyword">new</span> Board(startArray, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">let</span> endBoard = <span class="keyword">new</span> Board(endArray, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> dx = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">-1</span>], dy = [<span class="number">1</span>, <span class="number">0</span>, <span class="number">-1</span>, <span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> dis = <span class="keyword">new</span> <span class="built_in">Map</span>(), pre = <span class="keyword">new</span> <span class="built_in">Map</span>();</span><br><span class="line">    <span class="comment">//https://www.npmjs.com/package/js-priority-queue</span></span><br><span class="line">    <span class="keyword">let</span> q = <span class="keyword">new</span> PriorityQueue(&#123; <span class="attr">comparator</span>: <span class="function"><span class="keyword">function</span>(<span class="params">boarda, boardb</span>) </span>&#123; <span class="keyword">return</span> boarda.eval - boardb.eval; &#125;&#125;);</span><br><span class="line">    </span><br><span class="line">    q.queue(startBoard);</span><br><span class="line">    dis.set(startBoard.hashVal, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (q.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> curBoard = q.dequeue();</span><br><span class="line">        <span class="keyword">let</span> curS = getSpacePos(curBoard); <span class="comment">// 找到空格所在位置</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (curBoard.hashVal == endBoard.hashVal) &#123; <span class="comment">// 到达最终状态</span></span><br><span class="line">            getSolution(pre, endBoard.hashVal, solution); <span class="comment">// 寻找路径</span></span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">"search Finished!"</span>);</span><br><span class="line">            <span class="keyword">return</span> dis.get(curBoard.hashVal);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> dir = <span class="number">0</span>; dir &lt; <span class="number">4</span>; dir++) &#123; <span class="comment">// 遍历 4 个方向</span></span><br><span class="line">            <span class="keyword">let</span> nx = curS.x + dx[dir], ny = curS.y + dy[dir];</span><br><span class="line">            <span class="keyword">if</span> (nx &lt; <span class="number">0</span> || nx &gt; <span class="number">2</span> || ny &lt; <span class="number">0</span> || ny &gt; <span class="number">2</span>) <span class="keyword">continue</span>;</span><br><span class="line">            curBoard.swap(curS.x, curS.y, nx, ny);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">let</span> nxtBoard = <span class="keyword">new</span> Board(curBoard.state, dis.get(curBoard.hashVal));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> ((dis.get(nxtBoard.hashVal) == <span class="literal">undefined</span>) || dis[nxtBoard.hashVal] &gt; dis[curBoard.hashVal] + <span class="number">1</span>) &#123;</span><br><span class="line">                dis.set(nxtBoard.hashVal, dis.get(curBoard.hashVal) + <span class="number">1</span>);</span><br><span class="line">                pre.set(nxtBoard.hashVal, curBoard.hashVal);</span><br><span class="line">                q.queue(nxtBoard);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            curBoard.swap(curS.x, curS.y, nx, ny);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"search Finished!"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></div></figure>
+<p>当搜索到出队元素的状态(哈希值)等于目标状态（哈希值）时，表明已找到最优解，调用编写的 <code>getSolution</code> 函数得到路径，并返回最优解的步数。对于路径求法，简单地来讲就是从目标状态(哈希值)开始，不断求 <code>Map_pre(hashVal)</code> 值，并插入到可变长数组 <code>Array</code> 末尾。这样只要对比数组相邻两个元素之间空格位置的差异，就可以求出移动方案。</p>
+<figure class="highlight js"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getSolution</span>(<span class="params">pre, endHash, solution</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> curHashVal = endHash;</span><br><span class="line">    <span class="keyword">while</span> (curHashVal != <span class="literal">undefined</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> tmp = curHashVal.toString();</span><br><span class="line">        <span class="keyword">if</span> (tmp.length != <span class="number">9</span>) tmp = <span class="string">"0"</span> + tmp;</span><br><span class="line">        solution.push(tmp);</span><br><span class="line">        curHashVal = pre.get(curHashVal);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></div></figure>
+<p>当队列为空且仍未找到解时，返回 -1，之后再通过界面进一步交互。当然，未找到解的情况会耗费很多不必要的资源和时间，如果能在求解前能判断有没有解，能进一步提高程序效率，这也将在后面优化部分介绍。</p>
+<p>上述算法得到的 <code>javascript</code> 程序和已有标准 <code>c++</code> 程序对拍无误，能够在毫秒时间内求解。当然依旧有优化的空间，将在后面优化部分介绍。</p>
+
+        <h1 id="界面设计与结果演示"   >
+          <a href="#界面设计与结果演示" class="heading-link"><i class="fas fa-link"></i></a>界面设计与结果演示</h1>
+      
+
+        <h2 id="1界面设计"   >
+          <a href="#1界面设计" class="heading-link"><i class="fas fa-link"></i></a>1.界面设计</h2>
+      
+<center class="half">
+    
+        <img   class="lazyload lazyload-gif"
+          src="/images/loading.svg" data-src="/images/8-digit-puzzle/4.png"  width="600" height="300"/>
+      
+</center>
+<p>九宫格如上图所示，分为起始状态九宫格和目标状态九宫格。每个九宫格分为背景和 9 个 <code>input</code> 格子，9 个格子分为 3 行，并赋予 <code>id</code>。通过 <code>css</code> 实现三行对齐排列并进行美化。</p>
+<p>起始状态九宫格中的数字需要自己输入，目标状态的九宫格中填充了默认八数码问题目标状态，当然也可以自己进行修改。输入的数码不要求正确，因为在进行求解前会判断不合法的输入，并通过 <code>window.alert()</code> 提示错误信息。</p>
+<p><strong>九宫格 html 代码：</strong></p>
+<figure class="highlight html"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"center board"</span>&gt;</span> <span class="comment">&lt;!--起始状态九宫格--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"srow1"</span> <span class="attr">class</span>=<span class="string">"input-row1"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"s1"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"s2"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"s3"</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"srow2"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"s4"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"s5"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"s6"</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"srow3"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"s7"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"s8"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"s9"</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></div></figure>
+<p>除此之外，还设置了 4 个交互按钮如下：</p>
+<figure class="highlight html"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"center button-wrapper"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">"inputs-button"</span>&gt;</span>清空初态<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">"inpute-button"</span>&gt;</span>清空末态<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">"calc-button"</span>&gt;</span>求解<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">"reset-button"</span>&gt;</span>重置<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></div></figure>
+<p>其中清空初始状态、清空末状态按钮以及重置按钮便于重新设定数码。前两个清空按钮在求解演示时不能使用，重置按钮在求解演示时选择性重置，以便立即结束求解演示重新布置数码。如下图所示：</p>
+<center class="half">
+    
+        <img   class="lazyload lazyload-gif"
+          src="/images/loading.svg" data-src="/images/8-digit-puzzle/5.png"  width="320" height="180"/>
+      
+    
+        <img   class="lazyload lazyload-gif"
+          src="/images/loading.svg" data-src="/images/8-digit-puzzle/6.png"  width="320" height="180"/>
+      
+</center>
+<p>对于求解按钮，点击后会先调用判断函数判断输入是否合法，然后进行初始化操作，求出方案，再调用演示函数进行结果演示。</p>
+<center class="half">
+    
+        <img   class="lazyload lazyload-gif"
+          src="/images/loading.svg" data-src="/images/8-digit-puzzle/9.png"  width="320" height="180"/>
+      
+</center>
+<p>此外，在界面右端还有一个显示剩余步数的文本，随演示进行而变化。</p>
+<figure class="highlight html"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"step-paragraph"</span>&gt;</span>距离最终状态还需 <span class="tag">&lt;<span class="name">p1</span> <span class="attr">class</span>=<span class="string">"step-num"</span> <span class="attr">id</span>=<span class="string">"step-num"</span>&gt;</span>?<span class="tag">&lt;/<span class="name">p1</span>&gt;</span> 步<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></div></figure>
+<p>求解成功和失败界面：</p>
+<center class="half">
+    
+        <img   class="lazyload lazyload-gif"
+          src="/images/loading.svg" data-src="/images/8-digit-puzzle/5.png"  width="320" height="180"/>
+      
+    
+        <img   class="lazyload lazyload-gif"
+          src="/images/loading.svg" data-src="/images/8-digit-puzzle/6.png"  width="320" height="180"/>
+      
+</center>
+
+        <h2 id="2结果演示"   >
+          <a href="#2结果演示" class="heading-link"><i class="fas fa-link"></i></a>2.结果演示</h2>
+      
+<p>在第一部分算法设计中已提到，求解得到的路径已存放在可变长数组中。接下来就只需从后往前找到数组相邻两个元素的空格的位置。由于已设定好九宫格每个格子的 <code>id</code> 以及所在的行的 <code>id</code>，所以通过空格的位置可以很方便地求得其所对应的 <code>html</code> 节点。</p>
+<p>最后，通过 <code>javascript</code> 对 <code>DOM</code> 的一系列操作和计时事件即可在前端显示出空格每隔一段时间移动的效果。</p>
+<figure class="highlight js"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">displaySolution</span>(<span class="params">solution</span>) </span>&#123; <span class="comment">// 演示最短路径</span></span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">"step-num"</span>).innerHTML = solution.length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (solution.length &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        running = <span class="literal">false</span>;</span><br><span class="line">        setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">            successMsg(<span class="string">"求解完成!"</span>);</span><br><span class="line">        &#125;, <span class="number">1000</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    (<span class="function"><span class="keyword">function</span> <span class="title">myLoop</span>(<span class="params">i</span>) </span>&#123; <span class="comment">// 循环递归函数</span></span><br><span class="line">        setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="built_in">document</span>.getElementById(<span class="string">"step-num"</span>).innerHTML = i - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">let</span> id1 = <span class="string">"s"</span> + (solution[i].indexOf(<span class="string">"0"</span>) + <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">let</span> id2 = <span class="string">"s"</span> + (solution[i - <span class="number">1</span>].indexOf(<span class="string">"0"</span>) + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">let</span> node1 = <span class="built_in">document</span>.getElementById(id1);</span><br><span class="line">            <span class="keyword">let</span> node2 = <span class="built_in">document</span>.getElementById(id2);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">let</span> new1 = <span class="built_in">document</span>.createElement(<span class="string">"input"</span>);</span><br><span class="line">            new1.type = <span class="string">"text"</span>;</span><br><span class="line">            new1.id = id1;</span><br><span class="line">            new1.value = node2.value;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">let</span> new2 = <span class="built_in">document</span>.createElement(<span class="string">"input"</span>);</span><br><span class="line">            new2.type = <span class="string">"text"</span>;</span><br><span class="line">            new2.id = id2;</span><br><span class="line">            new2.value = node1.value;</span><br><span class="line">            new2.style.cssText = node1.style.cssText;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">let</span> faId1 = <span class="string">"srow"</span> + (<span class="built_in">Math</span>.floor(solution[i].indexOf(<span class="string">"0"</span>) / <span class="number">3</span>) + <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">let</span> faId2 = <span class="string">"srow"</span> + (<span class="built_in">Math</span>.floor(solution[i - <span class="number">1</span>].indexOf(<span class="string">"0"</span>) / <span class="number">3</span>) + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">            <span class="built_in">document</span>.getElementById(faId1).replaceChild(new1, node1);</span><br><span class="line">            <span class="built_in">document</span>.getElementById(faId2).replaceChild(new2, node2);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> ((--i) &gt;= <span class="number">1</span>) myLoop(i);</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                running = <span class="literal">false</span>;</span><br><span class="line">                setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">                    successMsg(<span class="string">"求解完成!"</span>);</span><br><span class="line">                &#125;, <span class="number">1000</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="number">1000</span>);</span><br><span class="line">    &#125;)(solution.length - <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></div></figure>
+
+        <h1 id="算法优化"   >
+          <a href="#算法优化" class="heading-link"><i class="fas fa-link"></i></a>算法优化</h1>
+      
+
+        <h2 id="1-无解判断"   >
+          <a href="#1-无解判断" class="heading-link"><i class="fas fa-link"></i></a>1. 无解判断</h2>
+      
+<p>前面提到如果在 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>A</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">A^*</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.688696em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.688696em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span></span></span></span> 算法搜索过程中，如果优先队列为空时仍然未找达到最终状态，则无解。但这会遍历所有可能的状态直至队列为空，空间与时间的消耗较大。如果在求解前进行判断，将会提高无解情况下的效率。<br />
+八数码两个局面可达，当且仅当局面下网格中的数依次写成 1 行 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>n</mi><mn>2</mn></msup><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">n^2 - 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.897438em;vertical-align:-0.08333em;"></span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span> 个元素时，逆序对个数的奇偶性相同。该性质的必要性很容易证明：空格左右移动时，写成的序列显然不变；空格上(下)移动时，相当于某个数与它后(前)的 2 个数交换位置，逆序对数变化是偶数。充分性证明较复杂，就不在此大篇幅讨论这样的一个数学问题。</p>
+
+        <h2 id="2-康托展开"   >
+          <a href="#2-康托展开" class="heading-link"><i class="fas fa-link"></i></a>2. 康托展开</h2>
+      
+<p>前面使用的是 <code>Map()</code> 存储简单哈希值，效率偏低。但如果使用康托展开，则可以对全排列进行编码和解码，把 1~N 的前排列与 1~N! 之间的整数建立一一映射关系。这样就可以 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span> 时间得到一个状态的信息。</p>
+
+        <h2 id="3-ida"   >
+          <a href="#3-ida" class="heading-link"><i class="fas fa-link"></i></a>3. IDA*</h2>
+      
+<p>$A^* $ 算法有一个显而易见的缺点，就是需要维护一个优先队列来存储状态以及估价，耗费空间较大，并且对优先队列进行依次操作也要花费 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>l</mi><mi>o</mi><mi>g</mi><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(logn)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span> 的时间。$IDA^* $ 以迭代加深 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>F</mi><mi>S</mi></mrow><annotation encoding="application/x-tex">DFS</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span> 的搜索框架为基础，即限定一个深度，在不超过该深度的前提下执行 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>F</mi><mi>S</mi></mrow><annotation encoding="application/x-tex">DFS</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span>，并把原来的简单的深度限制加强为：<strong>若当前深度 + 未来估计步数 &gt; 深度限制，则立即从当前分支回溯</strong>。若找不到解，则扩大搜索深度，重新进行搜索。<br />
+事实证明 $IDA^* $ 效率要优于 $A^* $，且程序实现难度低于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>A</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">A^*</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.688696em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.688696em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span></span></span></span>。</p>
+
+        <h1 id="使用说明"   >
+          <a href="#使用说明" class="heading-link"><i class="fas fa-link"></i></a>使用说明</h1>
+      
+<p>双击打开 index.html 文件即可(建议使用 Chrome、FireFox 等浏览器)，在输入起始状态和目标状态后点击<strong>求解</strong>按钮即可进行求解并演示方案。<br />
+<span class="exturl"><a class="exturl__link"   href="https://github.com/Shaun-Shane/AStar"  target="_blank" rel="noopener">项目github地址</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span>。</p>
+</div><footer class="post-footer"><div class="post-ending ending"><div class="ending__text">------ 本文结束，感谢您的阅读 ------</div></div><div class="post-copyright copyright"><div class="copyright-author"><span class="copyright-author__name">版权所有: </span><span class="copyright-author__value"><a href="http://Shaun-Shane.vercel.app">Shaun-Shane</a></span></div><div class="copyright-link"><span class="copyright-link__name">本文链接: </span><span class="copyright-link__value"><a href="http://shaun-shane.vercel.app/2021/04/09/8-digit-puzzle/">http://shaun-shane.vercel.app/2021/04/09/8-digit-puzzle/</a></span></div><div class="copyright-notice"><span class="copyright-notice__name">版权声明: </span><span class="copyright-notice__value">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" rel="external nofollow" target="_blank">BY-NC-SA</a> 许可协议。转载请注明出处！</span></div></div><div class="post-tags"><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="http://shaun-shane.vercel.app/tags/A-%E7%AE%97%E6%B3%95/">A*算法</a></span></div><nav class="post-paginator paginator"><div class="paginator-prev"><a class="paginator-prev__link" href="/2021/04/11/atcoder-abc-197/"><span class="paginator-prev__icon"><i class="fas fa-angle-left"></i></span><span class="paginator-prev__text">AtCoder Beginner Contest 197</span></a></div><div class="paginator-next"><a class="paginator-next__link" href="/2021/04/02/Borderline-DP/"><span class="paginator-prev__text">轮廓线 DP 入门</span><span class="paginator-next__icon"><i class="fas fa-angle-right"></i></span></a></div></nav></footer></div></div></div><div class="sidebar-wrap" id="sidebar-wrap"><aside class="sidebar" id="sidebar"><div class="sidebar-nav"><span class="sidebar-nav-toc current">文章目录</span><span class="sidebar-nav-ov">站点概览</span></div><section class="sidebar-toc"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#八数码问题"><span class="toc-number">1.</span> <span class="toc-text">
+          八数码问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#实验说明"><span class="toc-number">2.</span> <span class="toc-text">
+          实验说明</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#算法分析"><span class="toc-number">3.</span> <span class="toc-text">
+          算法分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#算法设计实现"><span class="toc-number">4.</span> <span class="toc-text">
+          算法设计实现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#界面设计与结果演示"><span class="toc-number">5.</span> <span class="toc-text">
+          界面设计与结果演示</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1界面设计"><span class="toc-number">5.1.</span> <span class="toc-text">
+          1.界面设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2结果演示"><span class="toc-number">5.2.</span> <span class="toc-text">
+          2.结果演示</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#算法优化"><span class="toc-number">6.</span> <span class="toc-text">
+          算法优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-无解判断"><span class="toc-number">6.1.</span> <span class="toc-text">
+          1. 无解判断</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-康托展开"><span class="toc-number">6.2.</span> <span class="toc-text">
+          2. 康托展开</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-ida"><span class="toc-number">6.3.</span> <span class="toc-text">
+          3. IDA*</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#使用说明"><span class="toc-number">7.</span> <span class="toc-text">
+          使用说明</span></a></li></ol></section><!-- ov = overview--><section class="sidebar-ov hide"><div class="sidebar-ov-author"><div class="sidebar-ov-author__avatar"><img class="sidebar-ov-author__avatar_img" src="/images/icons/stun-logo.png" alt="avatar"></div><p class="sidebar-ov-author__text">Valar Dohaeris</p></div><div class="sidebar-ov-social"><a class="sidebar-ov-social-item" href="https://github.com/Shaun-Shane" target="_blank" rel="noopener" data-popover="Github" data-popover-pos="up"><span class="sidebar-ov-social-item__icon"><i class="fab fa-github"></i></span></a><a class="sidebar-ov-social-item" href="tencent://message/?uin=2498861110码&amp;Site=&amp;menu=yes" target="_blank" rel="noopener" data-popover="QQ" data-popover-pos="up"><span class="sidebar-ov-social-item__icon"><i class="fab fa-qq"></i></span></a><a class="sidebar-ov-social-item" href="https://twitter.com/" target="_blank" rel="noopener" data-popover="Twitter" data-popover-pos="up"><span class="sidebar-ov-social-item__icon"><i class="fab fa-twitter"></i></span></a><a class="sidebar-ov-social-item" href="tencent://message/?uin=1624958541码&amp;Site=&amp;menu=yes" target="_blank" rel="noopener" data-popover="Telegram" data-popover-pos="up"><span class="sidebar-ov-social-item__icon"><i class="fab fa-qq"></i></span></a></div><div class="sidebar-ov-state"><a class="sidebar-ov-state-item sidebar-ov-state-item--categories" href="/categories/"><div class="sidebar-ov-state-item__count">58</div><div class="sidebar-ov-state-item__name">分类</div></a><a class="sidebar-ov-state-item sidebar-ov-state-item--tags" href="/tags/"><div class="sidebar-ov-state-item__count">72</div><div class="sidebar-ov-state-item__name">标签</div></a></div><div class="sidebar-ov-cc"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener" data-popover="知识共享许可协议" data-popover-pos="up"><img src="/images/cc-by-nc-sa.svg"></a></div></section><div class="sidebar-reading"><div class="sidebar-reading-info"><span class="sidebar-reading-info__text">你已阅读了 </span><span class="sidebar-reading-info__num">0</span></div><div class="sidebar-reading-line"></div></div></aside></div><div class="clearfix"></div></div></main><footer class="footer" id="footer"><div class="footer-inner"><div><span>Copyright © 2023</span><span class="footer__icon"><i class="fas fa-heart"></i></span><span>Shaun-Shane</span></div><div><span>由 <a href="http://hexo.io/" title="Hexo" target="_blank" rel="noopener">Hexo</a> 强力驱动</span><span> v4.1.1</span><span class="footer__devider">|</span><span>主题 - <a href="https://github.com/liuyib/hexo-theme-stun/" title="Stun" target="_blank" rel="noopener">Stun</a></span><span> v2.1.1</span></div></div></footer><div class="loading-bar" id="loading-bar"><div class="loading-bar__progress"></div></div><div class="back2top" id="back2top"><span class="back2top__icon"><i class="fas fa-rocket"></i></span></div></div><div class="search-mask"></div><div class="search-popup"><span class="search-close"></span><div class="search-input"><input placeholder="搜索文章（支持多关键词，请用空格分隔）"></div><div class="search-results"></div></div><script src="https://fastly.jsdelivr.net/npm/jquery@v3.4.1/dist/jquery.min.js"></script><script src="https://fastly.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.min.js"></script><script src="https://fastly.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.ui.min.js"></script><script src="https://fastly.jsdelivr.net/npm/ribbon.js@latest/dist/ribbon.min.js" size="120" alpha="0.6" zIndex="-1"></script><script src="https://fastly.jsdelivr.net/npm/canvas-nest.js@1.0.1/dist/canvas-nest.min.js" color="0,0,0" opacity="0.6" count="99" zIndex="-1"></script><script src="https://fastly.jsdelivr.net/npm/lazyload@2.0.0-rc.2/lazyload.min.js"></script><script>function initSearch() {
+  var isXML = true;
+  var search_path = 'search.json';
+
+  if (!search_path) {
+    search_path = 'search.xml';
+  } else if (/json$/i.test(search_path)) {
+    isXML = false;
+  }
+
+  var path = '/' + search_path;
+  $.ajax({
+    url: path,
+    dataType: isXML ? 'xml' : 'json',
+    async: true,
+    success: function (res) {
+      var datas = isXML ? $('entry', res).map(function () {
+        // 将 XML 转为 JSON
+        return {
+          title: $('title', this).text(),
+          content: $('content', this).text(),
+          url: $('url', this).text()
+        };
+      }).get() : res;
+      var $input = $('.search-input input');
+      var $result = $('.search-results');
+      // 搜索对象（标题、内容）的权重，影响显示顺序
+      var WEIGHT = { title: 100, content: 1 };
+      var searchPost = function () {
+        var searchText = $input.val().toLowerCase().trim();
+        // 根据空白字符分隔关键字
+        var keywords = searchText.split(/[\s]+/);
+        // 搜索结果
+        var matchPosts = [];
+
+        // 有多个关键字时，将原文字整个保存下来
+        if (keywords.length > 1) {
+          keywords.push(searchText);
+        }
+        // 防止未输入字符时搜索
+        if (searchText.length > 0) {
+          datas.forEach(function (data) {
+            var isMatch  = false;
+            // 没有标题的文章使用预设的 i18n 变量代替
+            var title = (data.title && data.title.trim()) || '[ 文章无标题 ]';
+            var titleLower = title && title.toLowerCase();
+            // 删除 HTML 标签 和 所有空白字符
+            var content = data.content && data.content.replace(/<[^>]+>/g, '');
+            var contentLower = content && content.toLowerCase();
+            // 删除重复的 /
+            var postURL = data.url && decodeURI(data.url).replace(/\/{2,}/g, '/');
+            // 标题中匹配到的关键词
+            var titleHitSlice = [];
+            // 内容中匹配到的关键词
+            var contentHitSlice = [];
+
+            keywords.forEach(function (keyword) {
+              /**
+              * 获取匹配的关键词的索引
+              * @param {String} keyword 要匹配的关键字
+              * @param {String} text 原文字
+              * @param {Boolean} caseSensitive 是否区分大小写
+              * @param {Number} weight 匹配对象的权重。权重大的优先显示
+              * @return {Array}
+              */
+              function getIndexByword (word, text, caseSensitive, weight) {
+                if (!word || !text) {
+                  return [];
+                };
+
+                var startIndex = 0; // 每次匹配的开始索引
+                var index = -1;     // 匹配到的索引值
+                var result = [];    // 匹配结果
+
+                if (!caseSensitive) {
+                  word = word.toLowerCase();
+                  text = text.toLowerCase();
+                }
+
+                while((index = text.indexOf(word, startIndex)) !== -1) {
+                  var hasMatch = false;
+                  // 索引位置相同的关键词，保留长度较长的
+                  titleHitSlice.forEach(function (hit) {
+                    if (hit.index === index && hit.word.length < word.length) {
+                      hit.word = word;
+                      hasMatch = true;
+                    }
+                  });
+                  startIndex = index + word.length;
+                  !hasMatch && result.push({ index: index, word: word, weight: weight });
+                }
+                return result;
+              }
+              titleHitSlice = titleHitSlice.concat(getIndexByword(keyword, titleLower, false, WEIGHT.title));
+              contentHitSlice = contentHitSlice.concat(getIndexByword(keyword, contentLower, false, WEIGHT.content));
+            });
+
+            var hitTitle = titleHitSlice.length;
+            var hitContent = contentHitSlice.length;
+
+            if (hitTitle > 0 || hitContent > 0) {
+              isMatch = true;
+            }
+            if (isMatch) {
+              ;[titleHitSlice, contentHitSlice].forEach(function (hit) {
+                // 按照匹配文字的索引的递增顺序排序
+                hit.sort(function (left, right) {
+                  return left.index - right.index;
+                });
+              });
+              /**
+              * 给文本中匹配到的关键词添加标记，从而进行高亮显示
+              * @param {String} text 原文本
+              * @param {Array} hitSlice 匹配项的索引信息
+              * @param {Number} start 开始索引
+              * @param {Number} end 结束索引
+              * @return {String}
+              */
+              function highlightKeyword (text, hitSlice, start, end) {
+                if (!text || !hitSlice || !hitSlice.length) {
+                  return;
+                }
+
+                var result = '';
+                var startIndex = start;
+                var endIndex = end;
+                hitSlice.forEach(function (hit) {
+                  if (hit.index < startIndex) {
+                    return;
+                  }
+
+                  var hitWordEnd = hit.index + hit.word.length;
+                  result += text.slice(startIndex, hit.index);
+                  result += '<b>' + text.slice(hit.index, hitWordEnd) + '</b>';
+                  startIndex = hitWordEnd;
+                });
+                result += text.slice(startIndex, endIndex);
+                return result;
+              }
+
+              var postData = {};
+              // 文章总的搜索权重
+              var postWeight = titleHitSlice.length * WEIGHT.title + contentHitSlice.length * WEIGHT.content;
+              // 标记匹配关键词后的标题
+              var postTitle = highlightKeyword(title, titleHitSlice, 0, title.length) || title;
+              // 标记匹配关键词后的内容
+              var postContent;
+              // 显示内容的长度
+              var SHOW_WORD_LENGTH = 200;
+              // 命中关键词前的字符显示长度
+              var SHOW_WORD_FRONT_LENGTH = 20;
+              var SHOW_WORD_END_LENGTH = SHOW_WORD_LENGTH - SHOW_WORD_FRONT_LENGTH;
+
+              // 截取匹配的第一个字符，前后共 200 个字符来显示
+              if (contentHitSlice.length > 0) {
+                var firstIndex = contentHitSlice[0].index;
+                var start = firstIndex > SHOW_WORD_FRONT_LENGTH ? firstIndex - SHOW_WORD_FRONT_LENGTH : 0;
+                var end = firstIndex + SHOW_WORD_END_LENGTH;
+                postContent = highlightKeyword(content, contentHitSlice, start, end);
+              } else { // 未匹配到内容，直接截取前 200 个字符来显示
+                postContent = content.slice(0, SHOW_WORD_LENGTH);
+              }
+              postData.title = postTitle;
+              postData.content = postContent;
+              postData.url = postURL;
+              postData.weight = postWeight;
+              matchPosts.push(postData);
+            }
+          });
+        }
+
+        var resultInnerHtml = '';
+        if (matchPosts.length) {
+          // 按权重递增的顺序排序，使权重大的优先显示
+          matchPosts.sort(function (left, right) {
+            return right.weight - left.weight;
+          });
+          resultInnerHtml += '<ul>';
+          matchPosts.forEach(function (post) {
+            resultInnerHtml += '<li><a class="search-results-title" href="' + post.url + '">';
+            resultInnerHtml += post.title;
+            resultInnerHtml += '</a><div class="search-results-content">';
+            resultInnerHtml += post.content;
+            resultInnerHtml += '</div></li>';
+          });
+          resultInnerHtml += '</ul>';
+        } else {
+          resultInnerHtml += '<div class="search-results-none"><i class="far fa-meh"></i></div>';
+        }
+        $result.html(resultInnerHtml);
+      };
+      $input.on('input', searchPost);
+      $input.on('keyup', function (e) {
+        if (e.keyCode === Stun.utils.codeToKeyCode('Enter')) {
+          searchPost();
+        }
+      });
+    }
+  });
+}
+
+function closeSearch () {
+  $('body').css({ overflow: 'auto' });
+  $('.search-popup').css({ display: 'none' });
+  $('.search-mask').css({ display: 'none' });
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+  Stun.utils.pjaxReloadLocalSearch = function () {
+    $('.header-nav-search').on('click', function (e) {
+      e.stopPropagation();
+      $('body').css('overflow', 'hidden');
+      $('.search-popup')
+        .velocity('stop')
+        .velocity('transition.expandIn', {
+          duration: 300,
+          complete: function () {
+            $('.search-popup input').focus();
+          }
+        });
+      $('.search-mask')
+        .velocity('stop')
+        .velocity('transition.fadeIn', {
+          duration: 300
+        });
+
+      initSearch();
+    });
+    $('.search-mask, .search-close').on('click', function () {
+      closeSearch();
+    });
+    $(document).on('keydown', function (e) {
+      // Escape <=> 27
+      if (e.keyCode === Stun.utils.codeToKeyCode('Escape')) {
+        closeSearch();
+      }
+    });
+  };
+
+  Stun.utils.pjaxReloadLocalSearch();
+}, false);</script><script src="https://fastly.jsdelivr.net/npm/pjax@latest/pjax.min.js"></script><script>window.addEventListener('DOMContentLoaded', function () {
+  var pjax = new Pjax({"selectors":["head title","#main",".pjax-reload"],"history":true,"scrollTo":false,"scrollRestoration":false,"cacheBust":false,"debug":false,"currentUrlFullReload":false,"timeout":0});
+  // 加载进度条的计时器
+  var loadingTimer = null;
+
+  // 重置页面 Y 方向上的滚动偏移量
+  document.addEventListener('pjax:send', function () {
+    $('.header-nav-menu').removeClass('show');
+    if (CONFIG.pjax && CONFIG.pjax.avoidBanner) {
+      $('html').velocity('scroll', {
+        duration: 500,
+        offset: $('#header').height(),
+        easing: 'easeInOutCubic'
+      });
+    }
+
+    var loadingBarWidth = 20;
+    var MAX_LOADING_WIDTH = 95;
+
+    $('.loading-bar').addClass('loading');
+    $('.loading-bar__progress').css('width', loadingBarWidth + '%');
+    clearInterval(loadingTimer);
+    loadingTimer = setInterval(function () {
+      loadingBarWidth += 3;
+      if (loadingBarWidth > MAX_LOADING_WIDTH) {
+        loadingBarWidth = MAX_LOADING_WIDTH;
+      }
+      $('.loading-bar__progress').css('width', loadingBarWidth + '%');
+    }, 500);
+  }, false);
+
+  window.addEventListener('pjax:complete', function () {
+    clearInterval(loadingTimer);
+    $('.loading-bar__progress').css('width', '100%');
+    $('.loading-bar').removeClass('loading');
+    setTimeout(function () {
+      $('.loading-bar__progress').css('width', '0');
+    }, 400);
+    $('link[rel=prefetch], script[data-pjax-rm]').each(function () {
+      $(this).remove();
+    });
+    $('script[data-pjax], #pjax-reload script').each(function () {
+      $(this).parent().append($(this).remove());
+    });
+
+    if (Stun.utils.pjaxReloadBoot) {
+      Stun.utils.pjaxReloadBoot();
+    }
+    if (Stun.utils.pjaxReloadScroll) {
+      Stun.utils.pjaxReloadScroll();
+    }
+    if (Stun.utils.pjaxReloadSidebar) {
+      Stun.utils.pjaxReloadSidebar();
+    }
+    if (false) {
+      if (Stun.utils.pjaxReloadHeader) {
+        Stun.utils.pjaxReloadHeader();
+      }
+      if (Stun.utils.pjaxReloadScrollIcon) {
+        Stun.utils.pjaxReloadScrollIcon();
+      }
+      if (Stun.utils.pjaxReloadLocalSearch) {
+        Stun.utils.pjaxReloadLocalSearch();
+      }
+    }
+  }, false);
+}, false);</script><div id="pjax-reload"><link href="https://fastly.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" rel="stylesheet" type="text/css"><link href="https://fastly.jsdelivr.net/npm/katex@0.10.2/dist/contrib/copy-tex.css" rel="stylesheet" type="text/css"><script src="https://fastly.jsdelivr.net/npm/katex@0.10.2/dist/contrib/copy-tex.min.js"></script></div><script src="/js/utils.js?v=2.1.1"></script><script src="/js/stun-boot.js?v=2.1.1"></script><script src="/js/scroll.js?v=2.1.1"></script><script src="/js/header.js?v=2.1.1"></script><script src="/js/sidebar.js?v=2.1.1"></script><script type="application/json" src="/search.json"></script><script>if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js?t=1694872236735')
+    .then(function () {console.log('ServiceWorker Register Successfully.')})
+    .catch(function (e) {console.error(e)});
+}
+</script></body></html>

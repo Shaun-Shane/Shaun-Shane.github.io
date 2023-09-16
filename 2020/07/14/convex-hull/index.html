@@ -1,0 +1,486 @@
+<!DOCTYPE html><html lang="zh-CN"><head><link rel=manifest href=/manifest.json><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#54bcff"><link rel="manifest" href="/manifest.json?v=2.1.1"><link rel="icon" href="/images/icons/favicon-16x16.png?v=2.1.1" type="image/png" sizes="16x16"><link rel="icon" href="/images/icons/favicon-32x32.png?v=2.1.1" type="image/png" sizes="32x32"><meta name="description" content="Convex Hull">
+<meta property="og:type" content="article">
+<meta property="og:title" content="凸包笔记 Convex Hull">
+<meta property="og:url" content="http://shaun-shane.vercel.app/2020/07/14/convex-hull/index.html">
+<meta property="og:site_name" content="Shaun-Shane blog">
+<meta property="og:description" content="Convex Hull">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://shaun-shane.vercel.app/images/pexels2.png">
+<meta property="article:published_time" content="2020-07-14T00:36:40.000Z">
+<meta property="article:modified_time" content="2023-09-15T14:34:55.000Z">
+<meta property="article:author" content="Shaun-Shane">
+<meta property="article:tag" content="凸包">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://shaun-shane.vercel.app/images/pexels2.png"><title>凸包笔记 Convex Hull | Shaun-Shane blog</title><link ref="canonical" href="http://shaun-shane.vercel.app/2020/07/14/convex-hull/"><link rel="dns-prefetch" href="https://fastly.jsdelivr.net"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.1/css/all.min.css" type="text/css"><link rel="stylesheet" href="/css/index.css?v=2.1.1"><script>var Stun = window.Stun || {};
+var CONFIG = {
+  root: '/',
+  algolia: undefined,
+  fontIcon: {"prompt":{"success":"fas fa-check-circle","info":"fas fa-arrow-circle-right","warning":"fas fa-exclamation-circle","error":"fas fa-times-circle"},"copyBtn":"fas fa-copy"},
+  sidebar: {"offsetTop":"20px","tocMaxDepth":6},
+  header: {"enable":true,"showOnPost":true,"scrollDownIcon":true},
+  postWidget: {"endText":true},
+  nightMode: {"enable":true},
+  back2top: {"enable":true},
+  codeblock: {"style":"default","highlight":"light","wordWrap":false},
+  reward: false,
+  fancybox: false,
+  zoomImage: {"gapAside":"20px"},
+  galleryWaterfall: undefined,
+  lazyload: true,
+  pjax: {"avoidBanner":true},
+  externalLink: {"icon":{"enable":true,"name":"fas fa-external-link-alt"}},
+  shortcuts: undefined,
+  prompt: {"copyButton":"复制","copySuccess":"复制成功","copyError":"复制失败"},
+  sourcePath: {"js":"js","css":"css","images":"images"},
+};
+
+window.CONFIG = CONFIG;</script><meta name="generator" content="Hexo 4.1.1"></head><body><div class="container" id="container"><header class="header" id="header"><div class="header-inner"><nav class="header-nav header-nav--fixed"><div class="header-nav-inner"><div class="header-nav-menubtn"><i class="fas fa-bars"></i></div><div class="header-nav-menu"><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/"><span class="header-nav-menu-item__icon"><i class="fas fa-home"></i></span><span class="header-nav-menu-item__text">首页</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="javascript:;" onclick="return false;"><span class="header-nav-menu-item__icon"><i class="fas fa-feather"></i></span><span class="header-nav-menu-item__text">文章</span></a><div class="header-nav-submenu"><div class="header-nav-submenu-item"><a class="header-nav-submenu-item__link" href="/archives/"><span class="header-nav-submenu-item__icon"><i class="fas fa-folder-open"></i></span><span class="header-nav-submenu-item__text">归档</span></a></div><div class="header-nav-submenu-item"><a class="header-nav-submenu-item__link" href="/categories/"><span class="header-nav-submenu-item__icon"><i class="fas fa-layer-group"></i></span><span class="header-nav-submenu-item__text">分类</span></a></div><div class="header-nav-submenu-item"><a class="header-nav-submenu-item__link" href="/tags/"><span class="header-nav-submenu-item__icon"><i class="fas fa-tags"></i></span><span class="header-nav-submenu-item__text">标签</span></a></div></div></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/categories/"><span class="header-nav-menu-item__icon"><i class="fas fa-layer-group"></i></span><span class="header-nav-menu-item__text">分类</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/tags/"><span class="header-nav-menu-item__icon"><i class="fas fa-tags"></i></span><span class="header-nav-menu-item__text">标签</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/about/"><span class="header-nav-menu-item__icon"><i class="fas fa-fingerprint"></i></span><span class="header-nav-menu-item__text">关于</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="javascript:;" onclick="return false;"><span class="header-nav-menu-item__icon"><i class="fas fa-angle-double-down"></i></span><span class="header-nav-menu-item__text">其它</span></a><div class="header-nav-submenu"><div class="header-nav-submenu-item"><a class="header-nav-submenu-item__link" href="/link/"><span class="header-nav-submenu-item__icon"><i class="fas fa-link"></i></span><span class="header-nav-submenu-item__text">链接</span></a></div></div></div></div><div class="header-nav-search"><span class="header-nav-search__icon"><i class="fas fa-search"></i></span><span class="header-nav-search__text">搜索</span></div><div class="header-nav-mode"><div class="mode"><div class="mode-track"><span class="mode-track-moon"></span><span class="mode-track-sun"></span></div><div class="mode-thumb"></div></div></div></div></nav><div class="header-banner"><div class="header-banner-info"><div class="header-banner-info__title">Shaun-Shane blog</div><div class="header-banner-info__subtitle"></div></div><div class="header-banner-arrow"><div class="header-banner-arrow__icon"><i class="fas fa-angle-down"></i></div></div></div></div></header><main class="main" id="main"><div class="main-inner"><div class="content-wrap" id="content-wrap"><div class="content" id="content"><!-- Just used to judge whether it is an article page--><div id="is-post"></div><div class="post"><header class="post-header"><h1 class="post-title">凸包笔记 Convex Hull</h1><div class="post-meta"><span class="post-meta-item post-meta-item--createtime"><span class="post-meta-item__icon"><i class="far fa-calendar-plus"></i></span><span class="post-meta-item__info">发表于</span><span class="post-meta-item__value">2020-07-14</span></span><span class="post-meta-item post-meta-item--updatetime"><span class="post-meta-item__icon"><i class="far fa-calendar-check"></i></span><span class="post-meta-item__info">更新于</span><span class="post-meta-item__value">2023-09-15</span></span><span class="post-meta-item post-meta-item--wordcount"><span class="post-meta-item__icon"><i class="far fa-file-word"></i></span><span class="post-meta-item__info">字数统计</span><span class="post-meta-item__value">2.4k</span></span><span class="post-meta-item post-meta-item--readtime"><span class="post-meta-item__icon"><i class="far fa-clock"></i></span><span class="post-meta-item__info">阅读时长</span><span class="post-meta-item__value">26分</span></span></div></header><div class="post-body"><div class="gallery"><img src="/images/pexels2.png"></div>
+        <h1 id="convex-hull"   >
+          <a href="#convex-hull" class="heading-link"><i class="fas fa-link"></i></a>Convex Hull</h1>
+      
+<a id="more"></a>
+<p><span class="exturl"><a class="exturl__link"   href="https://oi-wiki.org/geometry/convex-hull/"  target="_blank" rel="noopener">参考资料</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span><br />
+凸包常用的求法有 Graham 扫描法和 Andrew 算法。<br />
+Andrew 算法求凸包:<br />
+运用向量外积以及单调栈，<span class="exturl"><a class="exturl__link"   href="https://www.luogu.com.cn/problem/SP1805"  target="_blank" rel="noopener">单调栈例题</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span>。<br />
+向量类(重载了一些运算符)</p>
+<figure class="highlight cpp"><figcaption><span>Vector</span></figcaption><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Vec2</span> &#123;</span></span><br><span class="line">    Vec2() = <span class="keyword">default</span>;</span><br><span class="line">    Vec2(<span class="keyword">int</span> _x, <span class="keyword">int</span> _y) : x(_x), y(_y) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> <span class="keyword">bool</span> <span class="keyword">operator</span>&lt;(<span class="keyword">const</span> Vec2 &amp;a, <span class="keyword">const</span> Vec2 &amp;b) &#123;</span><br><span class="line">        <span class="keyword">return</span> a.x == b.x ? a.y &lt; b.y : a.x &lt; b.x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> Vec2 <span class="keyword">operator</span>-(<span class="keyword">const</span> Vec2&amp; a, <span class="keyword">const</span> Vec2&amp; b) &#123;</span><br><span class="line">        <span class="keyword">return</span> Vec2(a.x - b.x, a.y - b.y);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> <span class="keyword">int</span> <span class="keyword">operator</span>*(<span class="keyword">const</span> Vec2&amp; a, <span class="keyword">const</span> Vec2&amp; b) &#123;</span><br><span class="line">        <span class="keyword">return</span> a.x * b.y - a.y * b.x; <span class="comment">//×</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> x = <span class="number">0</span>, y = <span class="number">0</span>;</span><br><span class="line">&#125; vec[MAXN], cov[MAXN];</span><br></pre></td></tr></table></div></figure>
+<p>Andrew 算法求凸包</p>
+<figure class="highlight cpp"><figcaption><span>Andrew</span></figcaption><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">double</span> <span class="title">convex</span><span class="params">(<span class="keyword">double</span> res = <span class="number">0</span>)</span> </span>&#123;</span><br><span class="line">    top = <span class="number">0</span>, up = <span class="number">0</span>;</span><br><span class="line">    sort(vec + <span class="number">1</span>, vec + n + <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;  <span class="comment">//下凸壳</span></span><br><span class="line">        <span class="keyword">while</span> (top &gt; <span class="number">1</span> &amp;&amp; (cov[top] - cov[top - <span class="number">1</span>]) * (vec[i] - cov[top]) &lt;= <span class="number">0</span>)</span><br><span class="line">            cov[top--] = Vec2(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">        cov[++top] = vec[i];</span><br><span class="line">    &#125;</span><br><span class="line">    up = top; <span class="comment">//上凸壳起点</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = n - <span class="number">1</span>; i &gt; <span class="number">0</span>; i--) &#123;  <span class="comment">//上凸壳</span></span><br><span class="line">        <span class="keyword">while</span> (top &gt; up &amp;&amp; (cov[top] - cov[top - <span class="number">1</span>]) * (vec[i] - cov[top]) &lt;= <span class="number">0</span>)</span><br><span class="line">            cov[top--] = Vec2(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">        cov[++top] = vec[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; top; i++) &#123;  <span class="comment">//凸包中的所有点 求周长</span></span><br><span class="line">        Vec2 tmp = cov[i + <span class="number">1</span>] - cov[i];</span><br><span class="line">        res += <span class="built_in">sqrt</span>(<span class="built_in">pow</span>(tmp.x, <span class="number">2</span>) + <span class="built_in">pow</span>(tmp.y, <span class="number">2</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></div></figure>
+
+        <h1 id="例题"   >
+          <a href="#例题" class="heading-link"><i class="fas fa-link"></i></a>例题</h1>
+      
+
+        <h2 id="a-uva1303-wall"   >
+          <a href="#a-uva1303-wall" class="heading-link"><i class="fas fa-link"></i></a>A UVA1303 Wall</h2>
+      
+
+        <h3 id="problem"   >
+          <a href="#problem" class="heading-link"><i class="fas fa-link"></i></a>Problem</h3>
+      
+<p><span class="exturl"><a class="exturl__link"   href="https://www.luogu.com.cn/problem/UVA1303"  target="_blank" rel="noopener">题目链接</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span></p>
+
+        <h3 id="solution"   >
+          <a href="#solution" class="heading-link"><i class="fas fa-link"></i></a>Solution</h3>
+      
+<p>先求出给定点的凸包，再将凸包向外推 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">L</span></span></span></span>。<br />
+顶点处产生圆弧，各顶点圆弧对应圆周角总和为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>360</mn><mi mathvariant="normal">°</mi></mrow><annotation encoding="application/x-tex">360°</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">3</span><span class="mord">6</span><span class="mord">0</span><span class="mord">°</span></span></span></span>(运用多边形内角和可推出)。<br />
+答案为凸包长度加上一个半径为L的圆的周长。</p>
+
+        <h3 id="code"   >
+          <a href="#code" class="heading-link"><i class="fas fa-link"></i></a>Code</h3>
+      
+<figure class="highlight cpp"><figcaption><span>Wall</span></figcaption><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PI acos(-1)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> MAXN = <span class="number">1e3</span> + <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> testCase, n, L, top, up;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Vec2</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> x, y;</span><br><span class="line"></span><br><span class="line">    Vec2() : x(<span class="number">0</span>), y(<span class="number">0</span>) &#123;&#125;</span><br><span class="line">    Vec2(<span class="keyword">int</span> _x, <span class="keyword">int</span> _y) : x(_x), y(_y) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> <span class="keyword">bool</span> <span class="keyword">operator</span>&lt;(<span class="keyword">const</span> Vec2 &amp;a, <span class="keyword">const</span> Vec2 &amp;b) &#123;</span><br><span class="line">        <span class="keyword">return</span> a.x == b.x ? a.y &lt; b.y : a.x &lt; b.x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> Vec2 <span class="keyword">operator</span>-(<span class="keyword">const</span> Vec2&amp; a, <span class="keyword">const</span> Vec2&amp; b) &#123;</span><br><span class="line">        <span class="keyword">return</span> Vec2(a.x - b.x, a.y - b.y);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> <span class="keyword">int</span> <span class="keyword">operator</span>*(<span class="keyword">const</span> Vec2&amp; a, <span class="keyword">const</span> Vec2&amp; b) &#123;</span><br><span class="line">        <span class="keyword">return</span> a.x * b.y - a.y * b.x; <span class="comment">//×</span></span><br><span class="line">    &#125;    </span><br><span class="line">&#125; vec[MAXN], cov[MAXN];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">double</span> <span class="title">convex</span><span class="params">(<span class="keyword">double</span> res = <span class="number">0</span>)</span> </span>&#123;</span><br><span class="line">    top = <span class="number">0</span>, up = <span class="number">0</span>;</span><br><span class="line">    sort(vec + <span class="number">1</span>, vec + n + <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;  <span class="comment">//下凸壳</span></span><br><span class="line">        <span class="keyword">while</span> (top &gt; <span class="number">1</span> &amp;&amp; (cov[top] - cov[top - <span class="number">1</span>]) * (vec[i] - cov[top]) &lt;= <span class="number">0</span>)</span><br><span class="line">            cov[top--] = Vec2(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">        cov[++top] = vec[i];</span><br><span class="line">    &#125;</span><br><span class="line">    up = top; <span class="comment">//上凸壳起点</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = n - <span class="number">1</span>; i &gt; <span class="number">0</span>; i--) &#123;  <span class="comment">//上凸壳</span></span><br><span class="line">        <span class="keyword">while</span> (top &gt; up &amp;&amp; (cov[top] - cov[top - <span class="number">1</span>]) * (vec[i] - cov[top]) &lt;= <span class="number">0</span>)</span><br><span class="line">            cov[top--] = Vec2(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">        cov[++top] = vec[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; top; i++) &#123;  <span class="comment">//凸包中的所有点</span></span><br><span class="line">        Vec2 tmp = cov[i + <span class="number">1</span>] - cov[i];</span><br><span class="line">        res += <span class="built_in">sqrt</span>(<span class="built_in">pow</span>(tmp.x, <span class="number">2</span>) + <span class="built_in">pow</span>(tmp.y, <span class="number">2</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ios::sync_with_stdio(<span class="literal">false</span>), <span class="built_in">cin</span>.tie(<span class="number">0</span>), <span class="built_in">cout</span>.tie(<span class="number">0</span>);</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; testCase;</span><br><span class="line">    <span class="keyword">while</span> (testCase--) &#123;</span><br><span class="line">        <span class="built_in">cin</span> &gt;&gt; n &gt;&gt; L;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++) <span class="built_in">cin</span> &gt;&gt; vec[i].x &gt;&gt; vec[i].y;</span><br><span class="line">        <span class="keyword">double</span> res = convex() + PI * <span class="number">2</span> * L;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; setprecision(<span class="number">0</span>) &lt;&lt; fixed &lt;&lt; res &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">if</span> (testCase) <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></div></figure>
+
+        <h2 id="b-usaco51-圈奶牛fencing-the-cows"   >
+          <a href="#b-usaco51-圈奶牛fencing-the-cows" class="heading-link"><i class="fas fa-link"></i></a>B USACO5.1 圈奶牛Fencing the Cows</h2>
+      
+
+        <h3 id="problem-2"   >
+          <a href="#problem-2" class="heading-link"><i class="fas fa-link"></i></a>Problem</h3>
+      
+<p><span class="exturl"><a class="exturl__link"   href="https://www.luogu.com.cn/problem/P2742"  target="_blank" rel="noopener">题目链接</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span><br />
+Andrew 算法模板。</p>
+
+        <h2 id="c-uva11626-convex-hull"   >
+          <a href="#c-uva11626-convex-hull" class="heading-link"><i class="fas fa-link"></i></a>C UVA11626 Convex Hull</h2>
+      
+
+        <h3 id="problem-3"   >
+          <a href="#problem-3" class="heading-link"><i class="fas fa-link"></i></a>Problem</h3>
+      
+<p><span class="exturl"><a class="exturl__link"   href="https://www.luogu.com.cn/problem/UVA11626"  target="_blank" rel="noopener">题目链接</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span><br />
+Andrew 算法模板。</p>
+
+        <h2 id="d-uva811-the-fortified-forest"   >
+          <a href="#d-uva811-the-fortified-forest" class="heading-link"><i class="fas fa-link"></i></a>D UVA811 The Fortified Forest</h2>
+      
+
+        <h3 id="problem-4"   >
+          <a href="#problem-4" class="heading-link"><i class="fas fa-link"></i></a>Problem</h3>
+      
+<p><span class="exturl"><a class="exturl__link"   href="https://www.luogu.com.cn/problem/UVA11626"  target="_blank" rel="noopener">题目链接</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span></p>
+
+        <h3 id="solution-2"   >
+          <a href="#solution-2" class="heading-link"><i class="fas fa-link"></i></a>Solution</h3>
+      
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>N</mi><mo>≤</mo><mn>15</mn></mrow><annotation encoding="application/x-tex">N \le 15</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8193em;vertical-align:-0.13597em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">5</span></span></span></span>，考虑dfs枚举哪些树被砍掉，每个组合跑一次 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi><mi>n</mi><mi>d</mi><mi>r</mi><mi>e</mi><mi>w</mi></mrow><annotation encoding="application/x-tex">Andrew</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">A</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span> 算法进行比较(注意排序前需拷贝)。</p>
+
+        <h3 id="code-2"   >
+          <a href="#code-2" class="heading-link"><i class="fas fa-link"></i></a>Code</h3>
+      
+<figure class="highlight cpp"><figcaption><span>The Fortified Forest</span></figcaption><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="comment">//旧版凸包写法</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> MAXN = <span class="number">20</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Vector</span> &#123;</span></span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span> x = <span class="number">0</span>, y = <span class="number">0</span>, value = <span class="number">0</span>, len = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    Vector() = <span class="keyword">default</span>;</span><br><span class="line">    Vector(<span class="keyword">long</span> <span class="keyword">long</span> _x, <span class="keyword">long</span> <span class="keyword">long</span> _y, <span class="keyword">long</span> <span class="keyword">long</span> _v, <span class="keyword">long</span> <span class="keyword">long</span> _l)</span><br><span class="line">        : x(_x), y(_y), value(_v), len(_l) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> istream&amp; <span class="keyword">operator</span>&gt;&gt;(istream&amp; is, Vector&amp; obj) &#123;</span><br><span class="line">        is &gt;&gt; obj.x &gt;&gt; obj.y &gt;&gt; obj.value &gt;&gt; obj.len;</span><br><span class="line">        <span class="keyword">return</span> is;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> <span class="keyword">bool</span> <span class="keyword">operator</span>&lt;(<span class="keyword">const</span> Vector&amp; a, <span class="keyword">const</span> Vector&amp; b) &#123;</span><br><span class="line">        <span class="keyword">return</span> a.x == b.x ? a.y &lt; b.y : a.x &lt; b.x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> Vector <span class="keyword">operator</span>-(<span class="keyword">const</span> Vector&amp; a, <span class="keyword">const</span> Vector&amp; b) &#123;</span><br><span class="line">        <span class="keyword">return</span> Vector(a.x - b.x, a.y - b.y, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> <span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">operator</span>*(<span class="keyword">const</span> Vector&amp; a, <span class="keyword">const</span> Vector&amp; b) &#123;</span><br><span class="line">        <span class="keyword">return</span> a.x * b.y - a.y * b.x;  <span class="comment">//×</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125; vec[MAXN], vec2[MAXN], vec3[MAXN];</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> n, testCase, ansSize, tmpSize;</span><br><span class="line"><span class="keyword">double</span> ansLen, ansValue;</span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; vecTmp, vecAns;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">convex</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> stk[MAXN] = &#123;<span class="number">0</span>&#125;, used[MAXN] = &#123;<span class="number">0</span>&#125;, top(<span class="number">0</span>);</span><br><span class="line">    double res(0), value(0);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= tmpSize; i++) vec2[i] = vec3[i];</span><br><span class="line">    sort(vec2 + <span class="number">1</span>, vec2 + <span class="number">1</span> + tmpSize);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> &amp;i : vecTmp) value += vec[i].value, res += vec[i].len;</span><br><span class="line">    stk[++top] = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt;= tmpSize; i++) &#123;  <span class="comment">//下凸壳</span></span><br><span class="line">        <span class="keyword">while</span> (top &gt; <span class="number">1</span> &amp;&amp;</span><br><span class="line">               (vec2[stk[top]] - vec2[stk[top - <span class="number">1</span>]]) * (vec2[i] - vec2[stk[top]]) &lt;= <span class="number">0</span>)</span><br><span class="line">            used[stk[top--]] = <span class="literal">false</span>;</span><br><span class="line">        used[i] = <span class="literal">true</span>;</span><br><span class="line">        stk[++top] = i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> tmp = top;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = tmpSize - <span class="number">1</span>; i &gt; <span class="number">0</span>; i--) &#123;  <span class="comment">//上凸壳</span></span><br><span class="line">        <span class="keyword">if</span> (!used[i]) &#123;</span><br><span class="line">            <span class="keyword">while</span> (top &gt; tmp &amp;&amp; (vec2[stk[top]] - vec2[stk[top - <span class="number">1</span>]]) *</span><br><span class="line">                                        (vec2[i] - vec2[stk[top]]) &lt;= <span class="number">0</span>)</span><br><span class="line">                used[stk[top--]] = <span class="literal">false</span>;</span><br><span class="line">            used[i] = <span class="literal">true</span>;</span><br><span class="line">            stk[++top] = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; top; i++) &#123;</span><br><span class="line">        Vector tmp = vec2[stk[i + <span class="number">1</span>]] - vec2[stk[i]];</span><br><span class="line">        res -= <span class="built_in">sqrt</span>(tmp.x * tmp.x + tmp.y * tmp.y);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (res &gt;= <span class="number">0</span> &amp;&amp; (value &lt; ansValue || (value == ansValue &amp;&amp; ansSize &gt; vecTmp.size()))) &#123;</span><br><span class="line">        ansLen = res;</span><br><span class="line">        ansValue = value;</span><br><span class="line">        ansSize = vecTmp.size();</span><br><span class="line">        vecAns = vecTmp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="keyword">int</span> cur)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (cur == n + <span class="number">1</span>) &#123;</span><br><span class="line">        convex();</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    vecTmp.emplace_back(cur);</span><br><span class="line">    dfs(cur + <span class="number">1</span>); <span class="comment">//chopped</span></span><br><span class="line">    vecTmp.pop_back();</span><br><span class="line"></span><br><span class="line">    vec3[++tmpSize] = vec[cur];</span><br><span class="line">    dfs(cur + <span class="number">1</span>); <span class="comment">//not chopped</span></span><br><span class="line">    --tmpSize;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::ios::sync_with_stdio(<span class="literal">false</span>), <span class="built_in">cin</span>.tie(<span class="number">0</span>), <span class="built_in">cout</span>.tie(<span class="number">0</span>);</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">cnt</span><span class="params">(<span class="number">0</span>)</span></span>;</span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">cin</span> &gt;&gt; n &amp;&amp; n) &#123;</span><br><span class="line">        cnt++;</span><br><span class="line">        <span class="keyword">if</span> (cnt &gt; <span class="number">1</span>) <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        ansLen = <span class="number">1e15</span>, ansValue = <span class="number">1e15</span>, ansSize = <span class="number">20</span>, tmpSize  = <span class="number">0</span>;</span><br><span class="line">        vecTmp.clear(), vecAns.clear(), vecTmp.clear();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++) <span class="built_in">cin</span> &gt;&gt; vec[i];</span><br><span class="line">        dfs(<span class="number">1</span>);</span><br><span class="line">        <span class="built_in">cout</span>.unsetf(ios_base::fixed);</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"Forest "</span> &lt;&lt; cnt &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"Cut these trees:"</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> &amp;i : vecAns) <span class="built_in">cout</span> &lt;&lt; <span class="string">" "</span> &lt;&lt; i;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"Extra wood: "</span> &lt;&lt; setprecision(<span class="number">2</span>) &lt;&lt; fixed &lt;&lt; ansLen &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></div></figure>
+
+        <h2 id="e-shoi2012-信用卡凸包"   >
+          <a href="#e-shoi2012-信用卡凸包" class="heading-link"><i class="fas fa-link"></i></a>E SHOI2012 信用卡凸包</h2>
+      
+
+        <h3 id="problem-5"   >
+          <a href="#problem-5" class="heading-link"><i class="fas fa-link"></i></a>Problem</h3>
+      
+<p><span class="exturl"><a class="exturl__link"   href="https://www.luogu.com.cn/problem/P3829"  target="_blank" rel="noopener">题目链接</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span></p>
+
+        <h3 id="solution-3"   >
+          <a href="#solution-3" class="heading-link"><i class="fas fa-link"></i></a>Solution</h3>
+      
+<p>将矩形向内缩 1/4 圆半径 r，对其旋转后的顶点求凸包，再外推，加上一个半径为r的圆。</p>
+
+        <h3 id="code-3"   >
+          <a href="#code-3" class="heading-link"><i class="fas fa-link"></i></a>Code</h3>
+      
+<figure class="highlight cpp"><figcaption><span>信用卡凸包</span></figcaption><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="comment">//旧版凸包写法</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> MAXN = <span class="number">1e5</span> + <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Vector</span> &#123;</span></span><br><span class="line">    <span class="keyword">double</span> x = <span class="number">.0</span>, y = <span class="number">.0</span>;</span><br><span class="line"></span><br><span class="line">    Vector() = <span class="keyword">default</span>;</span><br><span class="line">    Vector(<span class="keyword">double</span> _x, <span class="keyword">double</span> _y) : x(_x), y(_y) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> <span class="keyword">bool</span> <span class="keyword">operator</span>&lt;(<span class="keyword">const</span> Vector&amp; a, <span class="keyword">const</span> Vector&amp; b) &#123;</span><br><span class="line">        <span class="keyword">return</span> a.x == b.x ? a.y &lt; b.y : a.x &lt; b.x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> Vector <span class="keyword">operator</span>-(<span class="keyword">const</span> Vector&amp; a, <span class="keyword">const</span> Vector&amp; b) &#123;</span><br><span class="line">        <span class="keyword">return</span> Vector(a.x - b.x, a.y - b.y);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> <span class="keyword">double</span> <span class="keyword">operator</span>*(<span class="keyword">const</span> Vector&amp; a, <span class="keyword">const</span> Vector&amp; b) &#123;</span><br><span class="line">        <span class="keyword">return</span> a.x * b.y - a.y * b.x;  <span class="comment">//×</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125; vec[MAXN];</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> cnt;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">double</span> <span class="title">convex</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> stk[MAXN] = &#123;<span class="number">0</span>&#125;, used[MAXN] = &#123;<span class="number">0</span>&#125;, top(<span class="number">0</span>);</span><br><span class="line">    <span class="built_in">memset</span>(used, <span class="number">0</span>, <span class="keyword">sizeof</span>(used));</span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">res</span><span class="params">(<span class="number">.0</span>)</span></span>;</span><br><span class="line">    sort(vec + <span class="number">1</span>, vec + cnt + <span class="number">1</span>);</span><br><span class="line">    stk[++top] = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt;= cnt; i++) &#123; <span class="comment">//下凸壳</span></span><br><span class="line">        <span class="keyword">while</span> (top &gt; <span class="number">1</span> &amp;&amp;</span><br><span class="line">               (vec[stk[top]] - vec[stk[top - <span class="number">1</span>]]) * (vec[i] - vec[stk[top]]) &lt;= <span class="number">0</span>)</span><br><span class="line">            used[stk[top--]] = <span class="literal">false</span>;</span><br><span class="line">        used[i] = <span class="literal">true</span>;</span><br><span class="line">        stk[++top] = i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> tmp = top;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = cnt - <span class="number">1</span>; i &gt; <span class="number">0</span>; i--) &#123; <span class="comment">//上凸壳</span></span><br><span class="line">        <span class="keyword">if</span> (!used[i]) &#123;</span><br><span class="line">            <span class="keyword">while</span> (top &gt; tmp &amp;&amp; (vec[stk[top]] - vec[stk[top - <span class="number">1</span>]]) *</span><br><span class="line">                                        (vec[i] - vec[stk[top]]) &lt;= <span class="number">0</span>)</span><br><span class="line">                used[stk[top--]] = <span class="literal">false</span>;</span><br><span class="line">            used[i] = <span class="literal">true</span>;</span><br><span class="line">            stk[++top] = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; top; i++) &#123; <span class="comment">//凸包中的所有点</span></span><br><span class="line">        Vector tmp = vec[stk[i + <span class="number">1</span>]] - vec[stk[i]];</span><br><span class="line">        res += <span class="built_in">sqrt</span>(<span class="built_in">pow</span>(tmp.x, <span class="number">2</span>) + <span class="built_in">pow</span>(tmp.y , <span class="number">2</span>));</span><br><span class="line">    &#125;   </span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::ios::sync_with_stdio(<span class="literal">false</span>), <span class="built_in">cin</span>.tie(<span class="number">0</span>), <span class="built_in">cout</span>.tie(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">int</span> n;</span><br><span class="line">    <span class="keyword">double</span> a, b, r;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; n &gt;&gt; a &gt;&gt; b &gt;&gt; r;</span><br><span class="line">    a = a / <span class="number">2</span> - r, b = b / <span class="number">2</span> - r;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        <span class="keyword">double</span> x, y, theta;</span><br><span class="line">        <span class="built_in">cin</span> &gt;&gt; x &gt;&gt; y &gt;&gt; theta;</span><br><span class="line">        <span class="keyword">double</span> len = <span class="built_in">sqrt</span>(<span class="built_in">pow</span>(a, <span class="number">2</span>) + <span class="built_in">pow</span>(b, <span class="number">2</span>));</span><br><span class="line">        <span class="keyword">double</span> alpha1 = <span class="built_in">atan2</span>(a, b) + theta;</span><br><span class="line">        <span class="keyword">double</span> alpha2 = <span class="built_in">atan2</span>(a, -b) + theta;</span><br><span class="line">        <span class="keyword">double</span> alpha3 = <span class="built_in">atan2</span>(-a, -b) + theta;</span><br><span class="line">        <span class="keyword">double</span> alpha4 = <span class="built_in">atan2</span>(-a, b) + theta;</span><br><span class="line">        vec[++cnt] = Vector(x + len * <span class="built_in">cos</span>(alpha1), y + len * <span class="built_in">sin</span>(alpha1));</span><br><span class="line">        vec[++cnt] = Vector(x + len * <span class="built_in">cos</span>(alpha2), y + len * <span class="built_in">sin</span>(alpha2));</span><br><span class="line">        vec[++cnt] = Vector(x + len * <span class="built_in">cos</span>(alpha3), y + len * <span class="built_in">sin</span>(alpha3));</span><br><span class="line">        vec[++cnt] = Vector(x + len * <span class="built_in">cos</span>(alpha4), y + len * <span class="built_in">sin</span>(alpha4));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; setprecision(<span class="number">2</span>) &lt;&lt; fixed &lt;&lt; convex() + <span class="built_in">acos</span>(<span class="number">-1</span>) * r * <span class="number">2.0</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></div></figure>
+
+        <h2 id="f-cerc2016-凸轮廓线-convex-contour"   >
+          <a href="#f-cerc2016-凸轮廓线-convex-contour" class="heading-link"><i class="fas fa-link"></i></a>F CERC2016 凸轮廓线 Convex Contour</h2>
+      
+
+        <h3 id="problem-6"   >
+          <a href="#problem-6" class="heading-link"><i class="fas fa-link"></i></a>Problem</h3>
+      
+<p><span class="exturl"><a class="exturl__link"   href="https://www.luogu.com.cn/problem/P3680"  target="_blank" rel="noopener">题目链接</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span></p>
+
+        <h3 id="solution-4"   >
+          <a href="#solution-4" class="heading-link"><i class="fas fa-link"></i></a>Solution</h3>
+      
+<p>将正方形和矩形的顶点计入，圆不能仅将上下两个点计入求凸包。<br />
+对于圆，可割圆法变为正1e4边形，将顶点计入求凸包。</p>
+
+        <h3 id="code-4"   >
+          <a href="#code-4" class="heading-link"><i class="fas fa-link"></i></a>Code</h3>
+      
+<figure class="highlight cpp"><figcaption><span>Convex Contour</span></figcaption><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PI acos(-1)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> MAXN = <span class="number">2e5</span> + <span class="number">5</span>;</span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> M = <span class="number">1e4</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Vec2</span> &#123;</span></span><br><span class="line">    Vec2() = <span class="keyword">default</span>;</span><br><span class="line">    Vec2(<span class="keyword">double</span> _x, <span class="keyword">double</span> _y) : x(_x), y(_y) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> <span class="keyword">bool</span> <span class="keyword">operator</span>&lt;(<span class="keyword">const</span> Vec2&amp; a, <span class="keyword">const</span> Vec2&amp; b) &#123;</span><br><span class="line">        <span class="keyword">return</span> a.x == b.x ? a.y &lt; b.y : a.x &lt; b.x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> Vec2 <span class="keyword">operator</span>-(<span class="keyword">const</span> Vec2&amp; a, <span class="keyword">const</span> Vec2&amp; b) &#123;</span><br><span class="line">        <span class="keyword">return</span> Vec2(a.x - b.x, a.y - b.y);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">inline</span> <span class="keyword">double</span> <span class="keyword">operator</span>*(<span class="keyword">const</span> Vec2&amp; a, <span class="keyword">const</span> Vec2&amp; b) &#123;</span><br><span class="line">        <span class="keyword">return</span> a.x * b.y - a.y * b.x;  <span class="comment">//×</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">double</span> x = <span class="number">.0</span>, y = <span class="number">.0</span>;</span><br><span class="line">&#125; vec[MAXN], cov[MAXN];</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> cnt;</span><br><span class="line">int top(0), up;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">double</span> <span class="title">convex</span><span class="params">(<span class="keyword">double</span> res = <span class="number">0</span>)</span> </span>&#123;</span><br><span class="line">    sort(vec + <span class="number">1</span>, vec + cnt + <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= cnt; i++) &#123;  <span class="comment">//下凸壳</span></span><br><span class="line">        <span class="keyword">while</span> (top &gt; <span class="number">1</span> &amp;&amp; (cov[top] - cov[top - <span class="number">1</span>]) * (vec[i] - cov[top]) &lt;= <span class="number">0</span>)</span><br><span class="line">            cov[top--] = Vec2(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">        cov[++top] = vec[i];</span><br><span class="line">    &#125;</span><br><span class="line">    up = top; <span class="comment">//上凸壳起点</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = cnt - <span class="number">1</span>; i &gt; <span class="number">0</span>; i--) &#123;  <span class="comment">//上凸壳</span></span><br><span class="line">        <span class="keyword">while</span> (top &gt; up &amp;&amp; (cov[top] - cov[top - <span class="number">1</span>]) * (vec[i] - cov[top]) &lt;= <span class="number">0</span>)</span><br><span class="line">            cov[top--] = Vec2(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">        cov[++top] = vec[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; top; i++) &#123;  <span class="comment">//凸包中的所有点</span></span><br><span class="line">        Vec2 tmp = cov[i + <span class="number">1</span>] - cov[i];</span><br><span class="line">        res += <span class="built_in">sqrt</span>(<span class="built_in">pow</span>(tmp.x, <span class="number">2</span>) + <span class="built_in">pow</span>(tmp.y, <span class="number">2</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::ios::sync_with_stdio(<span class="literal">false</span>), <span class="built_in">cin</span>.tie(<span class="number">0</span>), <span class="built_in">cout</span>.tie(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">double</span> n, st(<span class="number">0</span>);</span><br><span class="line">    <span class="built_in">string</span> s;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; n &gt;&gt; s;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.size(); i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'S'</span>) &#123;</span><br><span class="line">            vec[++cnt] = Vec2(st, <span class="number">0</span>);</span><br><span class="line">            vec[++cnt] = Vec2(st, <span class="number">2</span>);</span><br><span class="line">            vec[++cnt] = Vec2(st + <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">            vec[++cnt] = Vec2(st + <span class="number">2</span>, <span class="number">2</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (s[i] == <span class="string">'T'</span>) &#123;</span><br><span class="line">            vec[++cnt] = Vec2(st, <span class="number">0</span>);</span><br><span class="line">            vec[++cnt] = Vec2(st + <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">            vec[++cnt] = Vec2(st + <span class="number">1</span>, <span class="built_in">sqrt</span>(<span class="number">3.0</span>));</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= M; j++) &#123;</span><br><span class="line">                <span class="keyword">double</span> theta = PI * <span class="number">2</span> * j / M;</span><br><span class="line">                vec[++cnt] = Vec2(st + <span class="number">1</span> + <span class="built_in">cos</span>(theta), <span class="number">1</span> + <span class="built_in">sin</span>(theta));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        st += <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; setprecision(<span class="number">14</span>) &lt;&lt; fixed &lt;&lt; convex() / <span class="number">2</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></div></figure>
+</div><footer class="post-footer"><div class="post-ending ending"><div class="ending__text">------ 本文结束，感谢您的阅读 ------</div></div><div class="post-copyright copyright"><div class="copyright-author"><span class="copyright-author__name">版权所有: </span><span class="copyright-author__value"><a href="http://Shaun-Shane.vercel.app">Shaun-Shane</a></span></div><div class="copyright-link"><span class="copyright-link__name">本文链接: </span><span class="copyright-link__value"><a href="http://shaun-shane.vercel.app/2020/07/14/convex-hull/">http://shaun-shane.vercel.app/2020/07/14/convex-hull/</a></span></div><div class="copyright-notice"><span class="copyright-notice__name">版权声明: </span><span class="copyright-notice__value">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" rel="external nofollow" target="_blank">BY-NC-SA</a> 许可协议。转载请注明出处！</span></div></div><div class="post-tags"><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="http://shaun-shane.vercel.app/tags/%E5%87%B8%E5%8C%85/">凸包</a></span></div><nav class="post-paginator paginator"><div class="paginator-prev"><a class="paginator-prev__link" href="/2020/07/15/Island/"><span class="paginator-prev__icon"><i class="fas fa-angle-left"></i></span><span class="paginator-prev__text">IOI2008 Island</span></a></div><div class="paginator-next"><a class="paginator-next__link" href="/2020/07/13/xiao-z-de-wa-zi/"><span class="paginator-prev__text">国家集训队 小Z的袜子</span><span class="paginator-next__icon"><i class="fas fa-angle-right"></i></span></a></div></nav></footer></div></div></div><div class="sidebar-wrap" id="sidebar-wrap"><aside class="sidebar" id="sidebar"><div class="sidebar-nav"><span class="sidebar-nav-toc current">文章目录</span><span class="sidebar-nav-ov">站点概览</span></div><section class="sidebar-toc"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#convex-hull"><span class="toc-number">1.</span> <span class="toc-text">
+          Convex Hull</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#例题"><span class="toc-number">2.</span> <span class="toc-text">
+          例题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#a-uva1303-wall"><span class="toc-number">2.1.</span> <span class="toc-text">
+          A UVA1303 Wall</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#problem"><span class="toc-number">2.1.1.</span> <span class="toc-text">
+          Problem</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#solution"><span class="toc-number">2.1.2.</span> <span class="toc-text">
+          Solution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#code"><span class="toc-number">2.1.3.</span> <span class="toc-text">
+          Code</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#b-usaco51-圈奶牛fencing-the-cows"><span class="toc-number">2.2.</span> <span class="toc-text">
+          B USACO5.1 圈奶牛Fencing the Cows</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#problem-2"><span class="toc-number">2.2.1.</span> <span class="toc-text">
+          Problem</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#c-uva11626-convex-hull"><span class="toc-number">2.3.</span> <span class="toc-text">
+          C UVA11626 Convex Hull</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#problem-3"><span class="toc-number">2.3.1.</span> <span class="toc-text">
+          Problem</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#d-uva811-the-fortified-forest"><span class="toc-number">2.4.</span> <span class="toc-text">
+          D UVA811 The Fortified Forest</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#problem-4"><span class="toc-number">2.4.1.</span> <span class="toc-text">
+          Problem</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#solution-2"><span class="toc-number">2.4.2.</span> <span class="toc-text">
+          Solution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#code-2"><span class="toc-number">2.4.3.</span> <span class="toc-text">
+          Code</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#e-shoi2012-信用卡凸包"><span class="toc-number">2.5.</span> <span class="toc-text">
+          E SHOI2012 信用卡凸包</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#problem-5"><span class="toc-number">2.5.1.</span> <span class="toc-text">
+          Problem</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#solution-3"><span class="toc-number">2.5.2.</span> <span class="toc-text">
+          Solution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#code-3"><span class="toc-number">2.5.3.</span> <span class="toc-text">
+          Code</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#f-cerc2016-凸轮廓线-convex-contour"><span class="toc-number">2.6.</span> <span class="toc-text">
+          F CERC2016 凸轮廓线 Convex Contour</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#problem-6"><span class="toc-number">2.6.1.</span> <span class="toc-text">
+          Problem</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#solution-4"><span class="toc-number">2.6.2.</span> <span class="toc-text">
+          Solution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#code-4"><span class="toc-number">2.6.3.</span> <span class="toc-text">
+          Code</span></a></li></ol></li></ol></li></ol></section><!-- ov = overview--><section class="sidebar-ov hide"><div class="sidebar-ov-author"><div class="sidebar-ov-author__avatar"><img class="sidebar-ov-author__avatar_img" src="/images/icons/stun-logo.png" alt="avatar"></div><p class="sidebar-ov-author__text">Valar Dohaeris</p></div><div class="sidebar-ov-social"><a class="sidebar-ov-social-item" href="https://github.com/Shaun-Shane" target="_blank" rel="noopener" data-popover="Github" data-popover-pos="up"><span class="sidebar-ov-social-item__icon"><i class="fab fa-github"></i></span></a><a class="sidebar-ov-social-item" href="tencent://message/?uin=2498861110码&amp;Site=&amp;menu=yes" target="_blank" rel="noopener" data-popover="QQ" data-popover-pos="up"><span class="sidebar-ov-social-item__icon"><i class="fab fa-qq"></i></span></a><a class="sidebar-ov-social-item" href="https://twitter.com/" target="_blank" rel="noopener" data-popover="Twitter" data-popover-pos="up"><span class="sidebar-ov-social-item__icon"><i class="fab fa-twitter"></i></span></a><a class="sidebar-ov-social-item" href="tencent://message/?uin=1624958541码&amp;Site=&amp;menu=yes" target="_blank" rel="noopener" data-popover="Telegram" data-popover-pos="up"><span class="sidebar-ov-social-item__icon"><i class="fab fa-qq"></i></span></a></div><div class="sidebar-ov-state"><a class="sidebar-ov-state-item sidebar-ov-state-item--categories" href="/categories/"><div class="sidebar-ov-state-item__count">58</div><div class="sidebar-ov-state-item__name">分类</div></a><a class="sidebar-ov-state-item sidebar-ov-state-item--tags" href="/tags/"><div class="sidebar-ov-state-item__count">72</div><div class="sidebar-ov-state-item__name">标签</div></a></div><div class="sidebar-ov-cc"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener" data-popover="知识共享许可协议" data-popover-pos="up"><img src="/images/cc-by-nc-sa.svg"></a></div></section><div class="sidebar-reading"><div class="sidebar-reading-info"><span class="sidebar-reading-info__text">你已阅读了 </span><span class="sidebar-reading-info__num">0</span></div><div class="sidebar-reading-line"></div></div></aside></div><div class="clearfix"></div></div></main><footer class="footer" id="footer"><div class="footer-inner"><div><span>Copyright © 2023</span><span class="footer__icon"><i class="fas fa-heart"></i></span><span>Shaun-Shane</span></div><div><span>由 <a href="http://hexo.io/" title="Hexo" target="_blank" rel="noopener">Hexo</a> 强力驱动</span><span> v4.1.1</span><span class="footer__devider">|</span><span>主题 - <a href="https://github.com/liuyib/hexo-theme-stun/" title="Stun" target="_blank" rel="noopener">Stun</a></span><span> v2.1.1</span></div></div></footer><div class="loading-bar" id="loading-bar"><div class="loading-bar__progress"></div></div><div class="back2top" id="back2top"><span class="back2top__icon"><i class="fas fa-rocket"></i></span></div></div><div class="search-mask"></div><div class="search-popup"><span class="search-close"></span><div class="search-input"><input placeholder="搜索文章（支持多关键词，请用空格分隔）"></div><div class="search-results"></div></div><script src="https://fastly.jsdelivr.net/npm/jquery@v3.4.1/dist/jquery.min.js"></script><script src="https://fastly.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.min.js"></script><script src="https://fastly.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.ui.min.js"></script><script src="https://fastly.jsdelivr.net/npm/ribbon.js@latest/dist/ribbon.min.js" size="120" alpha="0.6" zIndex="-1"></script><script src="https://fastly.jsdelivr.net/npm/canvas-nest.js@1.0.1/dist/canvas-nest.min.js" color="0,0,0" opacity="0.6" count="99" zIndex="-1"></script><script src="https://fastly.jsdelivr.net/npm/lazyload@2.0.0-rc.2/lazyload.min.js"></script><script>function initSearch() {
+  var isXML = true;
+  var search_path = 'search.json';
+
+  if (!search_path) {
+    search_path = 'search.xml';
+  } else if (/json$/i.test(search_path)) {
+    isXML = false;
+  }
+
+  var path = '/' + search_path;
+  $.ajax({
+    url: path,
+    dataType: isXML ? 'xml' : 'json',
+    async: true,
+    success: function (res) {
+      var datas = isXML ? $('entry', res).map(function () {
+        // 将 XML 转为 JSON
+        return {
+          title: $('title', this).text(),
+          content: $('content', this).text(),
+          url: $('url', this).text()
+        };
+      }).get() : res;
+      var $input = $('.search-input input');
+      var $result = $('.search-results');
+      // 搜索对象（标题、内容）的权重，影响显示顺序
+      var WEIGHT = { title: 100, content: 1 };
+      var searchPost = function () {
+        var searchText = $input.val().toLowerCase().trim();
+        // 根据空白字符分隔关键字
+        var keywords = searchText.split(/[\s]+/);
+        // 搜索结果
+        var matchPosts = [];
+
+        // 有多个关键字时，将原文字整个保存下来
+        if (keywords.length > 1) {
+          keywords.push(searchText);
+        }
+        // 防止未输入字符时搜索
+        if (searchText.length > 0) {
+          datas.forEach(function (data) {
+            var isMatch  = false;
+            // 没有标题的文章使用预设的 i18n 变量代替
+            var title = (data.title && data.title.trim()) || '[ 文章无标题 ]';
+            var titleLower = title && title.toLowerCase();
+            // 删除 HTML 标签 和 所有空白字符
+            var content = data.content && data.content.replace(/<[^>]+>/g, '');
+            var contentLower = content && content.toLowerCase();
+            // 删除重复的 /
+            var postURL = data.url && decodeURI(data.url).replace(/\/{2,}/g, '/');
+            // 标题中匹配到的关键词
+            var titleHitSlice = [];
+            // 内容中匹配到的关键词
+            var contentHitSlice = [];
+
+            keywords.forEach(function (keyword) {
+              /**
+              * 获取匹配的关键词的索引
+              * @param {String} keyword 要匹配的关键字
+              * @param {String} text 原文字
+              * @param {Boolean} caseSensitive 是否区分大小写
+              * @param {Number} weight 匹配对象的权重。权重大的优先显示
+              * @return {Array}
+              */
+              function getIndexByword (word, text, caseSensitive, weight) {
+                if (!word || !text) {
+                  return [];
+                };
+
+                var startIndex = 0; // 每次匹配的开始索引
+                var index = -1;     // 匹配到的索引值
+                var result = [];    // 匹配结果
+
+                if (!caseSensitive) {
+                  word = word.toLowerCase();
+                  text = text.toLowerCase();
+                }
+
+                while((index = text.indexOf(word, startIndex)) !== -1) {
+                  var hasMatch = false;
+                  // 索引位置相同的关键词，保留长度较长的
+                  titleHitSlice.forEach(function (hit) {
+                    if (hit.index === index && hit.word.length < word.length) {
+                      hit.word = word;
+                      hasMatch = true;
+                    }
+                  });
+                  startIndex = index + word.length;
+                  !hasMatch && result.push({ index: index, word: word, weight: weight });
+                }
+                return result;
+              }
+              titleHitSlice = titleHitSlice.concat(getIndexByword(keyword, titleLower, false, WEIGHT.title));
+              contentHitSlice = contentHitSlice.concat(getIndexByword(keyword, contentLower, false, WEIGHT.content));
+            });
+
+            var hitTitle = titleHitSlice.length;
+            var hitContent = contentHitSlice.length;
+
+            if (hitTitle > 0 || hitContent > 0) {
+              isMatch = true;
+            }
+            if (isMatch) {
+              ;[titleHitSlice, contentHitSlice].forEach(function (hit) {
+                // 按照匹配文字的索引的递增顺序排序
+                hit.sort(function (left, right) {
+                  return left.index - right.index;
+                });
+              });
+              /**
+              * 给文本中匹配到的关键词添加标记，从而进行高亮显示
+              * @param {String} text 原文本
+              * @param {Array} hitSlice 匹配项的索引信息
+              * @param {Number} start 开始索引
+              * @param {Number} end 结束索引
+              * @return {String}
+              */
+              function highlightKeyword (text, hitSlice, start, end) {
+                if (!text || !hitSlice || !hitSlice.length) {
+                  return;
+                }
+
+                var result = '';
+                var startIndex = start;
+                var endIndex = end;
+                hitSlice.forEach(function (hit) {
+                  if (hit.index < startIndex) {
+                    return;
+                  }
+
+                  var hitWordEnd = hit.index + hit.word.length;
+                  result += text.slice(startIndex, hit.index);
+                  result += '<b>' + text.slice(hit.index, hitWordEnd) + '</b>';
+                  startIndex = hitWordEnd;
+                });
+                result += text.slice(startIndex, endIndex);
+                return result;
+              }
+
+              var postData = {};
+              // 文章总的搜索权重
+              var postWeight = titleHitSlice.length * WEIGHT.title + contentHitSlice.length * WEIGHT.content;
+              // 标记匹配关键词后的标题
+              var postTitle = highlightKeyword(title, titleHitSlice, 0, title.length) || title;
+              // 标记匹配关键词后的内容
+              var postContent;
+              // 显示内容的长度
+              var SHOW_WORD_LENGTH = 200;
+              // 命中关键词前的字符显示长度
+              var SHOW_WORD_FRONT_LENGTH = 20;
+              var SHOW_WORD_END_LENGTH = SHOW_WORD_LENGTH - SHOW_WORD_FRONT_LENGTH;
+
+              // 截取匹配的第一个字符，前后共 200 个字符来显示
+              if (contentHitSlice.length > 0) {
+                var firstIndex = contentHitSlice[0].index;
+                var start = firstIndex > SHOW_WORD_FRONT_LENGTH ? firstIndex - SHOW_WORD_FRONT_LENGTH : 0;
+                var end = firstIndex + SHOW_WORD_END_LENGTH;
+                postContent = highlightKeyword(content, contentHitSlice, start, end);
+              } else { // 未匹配到内容，直接截取前 200 个字符来显示
+                postContent = content.slice(0, SHOW_WORD_LENGTH);
+              }
+              postData.title = postTitle;
+              postData.content = postContent;
+              postData.url = postURL;
+              postData.weight = postWeight;
+              matchPosts.push(postData);
+            }
+          });
+        }
+
+        var resultInnerHtml = '';
+        if (matchPosts.length) {
+          // 按权重递增的顺序排序，使权重大的优先显示
+          matchPosts.sort(function (left, right) {
+            return right.weight - left.weight;
+          });
+          resultInnerHtml += '<ul>';
+          matchPosts.forEach(function (post) {
+            resultInnerHtml += '<li><a class="search-results-title" href="' + post.url + '">';
+            resultInnerHtml += post.title;
+            resultInnerHtml += '</a><div class="search-results-content">';
+            resultInnerHtml += post.content;
+            resultInnerHtml += '</div></li>';
+          });
+          resultInnerHtml += '</ul>';
+        } else {
+          resultInnerHtml += '<div class="search-results-none"><i class="far fa-meh"></i></div>';
+        }
+        $result.html(resultInnerHtml);
+      };
+      $input.on('input', searchPost);
+      $input.on('keyup', function (e) {
+        if (e.keyCode === Stun.utils.codeToKeyCode('Enter')) {
+          searchPost();
+        }
+      });
+    }
+  });
+}
+
+function closeSearch () {
+  $('body').css({ overflow: 'auto' });
+  $('.search-popup').css({ display: 'none' });
+  $('.search-mask').css({ display: 'none' });
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+  Stun.utils.pjaxReloadLocalSearch = function () {
+    $('.header-nav-search').on('click', function (e) {
+      e.stopPropagation();
+      $('body').css('overflow', 'hidden');
+      $('.search-popup')
+        .velocity('stop')
+        .velocity('transition.expandIn', {
+          duration: 300,
+          complete: function () {
+            $('.search-popup input').focus();
+          }
+        });
+      $('.search-mask')
+        .velocity('stop')
+        .velocity('transition.fadeIn', {
+          duration: 300
+        });
+
+      initSearch();
+    });
+    $('.search-mask, .search-close').on('click', function () {
+      closeSearch();
+    });
+    $(document).on('keydown', function (e) {
+      // Escape <=> 27
+      if (e.keyCode === Stun.utils.codeToKeyCode('Escape')) {
+        closeSearch();
+      }
+    });
+  };
+
+  Stun.utils.pjaxReloadLocalSearch();
+}, false);</script><script src="https://fastly.jsdelivr.net/npm/pjax@latest/pjax.min.js"></script><script>window.addEventListener('DOMContentLoaded', function () {
+  var pjax = new Pjax({"selectors":["head title","#main",".pjax-reload"],"history":true,"scrollTo":false,"scrollRestoration":false,"cacheBust":false,"debug":false,"currentUrlFullReload":false,"timeout":0});
+  // 加载进度条的计时器
+  var loadingTimer = null;
+
+  // 重置页面 Y 方向上的滚动偏移量
+  document.addEventListener('pjax:send', function () {
+    $('.header-nav-menu').removeClass('show');
+    if (CONFIG.pjax && CONFIG.pjax.avoidBanner) {
+      $('html').velocity('scroll', {
+        duration: 500,
+        offset: $('#header').height(),
+        easing: 'easeInOutCubic'
+      });
+    }
+
+    var loadingBarWidth = 20;
+    var MAX_LOADING_WIDTH = 95;
+
+    $('.loading-bar').addClass('loading');
+    $('.loading-bar__progress').css('width', loadingBarWidth + '%');
+    clearInterval(loadingTimer);
+    loadingTimer = setInterval(function () {
+      loadingBarWidth += 3;
+      if (loadingBarWidth > MAX_LOADING_WIDTH) {
+        loadingBarWidth = MAX_LOADING_WIDTH;
+      }
+      $('.loading-bar__progress').css('width', loadingBarWidth + '%');
+    }, 500);
+  }, false);
+
+  window.addEventListener('pjax:complete', function () {
+    clearInterval(loadingTimer);
+    $('.loading-bar__progress').css('width', '100%');
+    $('.loading-bar').removeClass('loading');
+    setTimeout(function () {
+      $('.loading-bar__progress').css('width', '0');
+    }, 400);
+    $('link[rel=prefetch], script[data-pjax-rm]').each(function () {
+      $(this).remove();
+    });
+    $('script[data-pjax], #pjax-reload script').each(function () {
+      $(this).parent().append($(this).remove());
+    });
+
+    if (Stun.utils.pjaxReloadBoot) {
+      Stun.utils.pjaxReloadBoot();
+    }
+    if (Stun.utils.pjaxReloadScroll) {
+      Stun.utils.pjaxReloadScroll();
+    }
+    if (Stun.utils.pjaxReloadSidebar) {
+      Stun.utils.pjaxReloadSidebar();
+    }
+    if (false) {
+      if (Stun.utils.pjaxReloadHeader) {
+        Stun.utils.pjaxReloadHeader();
+      }
+      if (Stun.utils.pjaxReloadScrollIcon) {
+        Stun.utils.pjaxReloadScrollIcon();
+      }
+      if (Stun.utils.pjaxReloadLocalSearch) {
+        Stun.utils.pjaxReloadLocalSearch();
+      }
+    }
+  }, false);
+}, false);</script><div id="pjax-reload"><link href="https://fastly.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" rel="stylesheet" type="text/css"><link href="https://fastly.jsdelivr.net/npm/katex@0.10.2/dist/contrib/copy-tex.css" rel="stylesheet" type="text/css"><script src="https://fastly.jsdelivr.net/npm/katex@0.10.2/dist/contrib/copy-tex.min.js"></script></div><script src="/js/utils.js?v=2.1.1"></script><script src="/js/stun-boot.js?v=2.1.1"></script><script src="/js/scroll.js?v=2.1.1"></script><script src="/js/header.js?v=2.1.1"></script><script src="/js/sidebar.js?v=2.1.1"></script><script type="application/json" src="/search.json"></script><script>if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js?t=1694872236735')
+    .then(function () {console.log('ServiceWorker Register Successfully.')})
+    .catch(function (e) {console.error(e)});
+}
+</script></body></html>
