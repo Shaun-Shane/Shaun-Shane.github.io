@@ -1870,6 +1870,7 @@ kbd {
 }
 .post-meta-item--author {
   color: var(--color-gray-700);
+  display: block;
 }
 .post-meta-item--visitors {
   color: #fc6423;
