@@ -24,15 +24,15 @@ var precacheUrls = [];
 
   precacheUrls.push('/');
 
-  precacheUrls.push('/2021/04/09/8-digit-puzzle/');
-
-  precacheUrls.push('/2020/08/12/A-Twisty-Movement/');
-
-  precacheUrls.push('/2020/07/12/ALO/');
+  precacheUrls.push('/2020/07/13/Array-Shrinking/');
 
   precacheUrls.push('/2020/08/11/Adaptive-Simpson/');
 
-  precacheUrls.push('/2020/07/13/Array-Shrinking/');
+  precacheUrls.push('/2020/09/03/Battle-for-Azathoth/');
+
+  precacheUrls.push('/2021/04/02/Borderline-DP/');
+
+  precacheUrls.push('/2020/08/12/A-Twisty-Movement/');
 
 toolbox.precache(precacheUrls);
 toolbox.options = {"networkTimeoutSeconds":5};
